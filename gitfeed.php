@@ -34,10 +34,12 @@ function git_feed() {
 	curl_setopt_array($ch, $defaults); 
 	$data = json_decode(curl_exec($ch));
 	
-	echo '<div style="margin-top: 30px;" class="container">';
+	echo '<div style="margin-top: 30px;" class="container-fluid">';
 	
 	for($i = 0; $i < count($data); $i++) {
-		echo '<p><strong>' . $data[$i]->name . '</strong>: ' . $data[$i]->description . '</p>';
+		$current = $data[$i];
+		echo '<p><strong>' . $current->name . '</strong>: ' . $current->description;
+		echo ' Last updated: ' . $current->updated_at . '</p>';
 	}
 	
 	echo '</div>';
