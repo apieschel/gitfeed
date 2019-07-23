@@ -18,9 +18,11 @@ Text Domain: gitfeed
 add_shortcode( 'gitfeed', 'git_feed' );
 
 function git_feed() {
+	// set up local certificate to deal with https permissions
 	$certificate = "C:\users\apieschel\Desktop\gtrsoftware\cacert.pem";
 	$user = 'apieschel';
-
+	
+	// set up GET request to Github API
 	$defaults = array( 
 		CURLOPT_URL => 'https://api.github.com/users/' . $user . '/repos',
 		CURLOPT_HEADER => 0, 
@@ -33,16 +35,27 @@ function git_feed() {
 	$ch = curl_init(); 
 	curl_setopt_array($ch, $defaults); 
 	$data = json_decode(curl_exec($ch));
+	$repos = array();
 	
-	echo '<div style="margin-top: 30px;" class="container-fluid">';
-	
+	// loop through the data, and create a new array with timestamps as keys
 	for($i = 0; $i < count($data); $i++) {
+		$array = array();
 		$current = $data[$i];
-		echo '<p><strong>' . $current->name . '</strong>: ' . $current->description;
-		echo ' Last updated: ' . $current->updated_at . '</p>';
+		array_push($array, $current->name);
+		array_push($array, $current->description);
+		$repos[strtotime($data[$i]->updated_at)] = $array;
 	}
 	
+	// sort the array in reverse order according to the timestamps
+	krsort($repos);
+	
+	// display the data
+	echo '<div style="margin-top: 30px;" class="container-fluid">';
+		foreach($repos as $key=>$value) {	
+			echo '<p><strong>' . $value[0] . '</strong>: ' . $value[1];
+			echo ' Last updated: ' . date("F j, Y, g:i a", $key) . '</p>';
+		}
 	echo '</div>';
-
+	
 	curl_close($ch); 
 }
