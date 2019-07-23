@@ -50,10 +50,11 @@ function git_feed() {
 	krsort($repos);
 	
 	// display the data
-	echo '<div style="margin-top: 30px;" class="container-fluid">';
+	echo '<div class="container-fluid">';
+	echo '<h2 style="font-size:1.4rem; font-weight:normal; text-align:center;">A feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
 		foreach($repos as $key=>$value) {	
-			echo '<p><strong>' . $value[0] . '</strong>: ' . $value[1];
-			echo ' Last updated: ' . date("F j, Y, g:i a", $key) . '</p>';
+			echo '<p style="margin:20px;"><strong>' . $value[0] . '</strong>: ' . $value[1];
+			echo ' <span style="margin-left:5px;"><em>Last updated</em>: ' . date("F j, Y, g:i a", $key) . '</span></p>';
 		}
 	echo '</div>';
 	
