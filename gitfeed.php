@@ -14,6 +14,7 @@ License: GPLv2 or later
 Text Domain: gitfeed
 */
 
+// First, let's test out the Github API in the WP Admin screen
 add_action( 'admin_notices', 'git_feed' );
 
 function git_feed() {
