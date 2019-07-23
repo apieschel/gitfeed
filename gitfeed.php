@@ -18,25 +18,26 @@ Text Domain: gitfeed
 add_action( 'admin_notices', 'git_feed' );
 
 function git_feed() {
+	
+	$certificate = "C:\Users\apieschel\Desktop\gtrsoftware\cacert.pem";
+	
 	$defaults = array( 
 		CURLOPT_URL => 'https://api.github.com/users/apieschel/repos',
 		CURLOPT_HEADER => 0, 
 		CURLOPT_RETURNTRANSFER => TRUE,
-		CURLOPT_SSL_VERIFYHOST => FALSE,
-		CURLOPT_SSL_VERIFYPEER => FALSE,
+		CURLOPT_CAINFO => $certificate,
+		CURLOPT_CAPATH => $certificate,
 		CURLOPT_USERAGENT => 'apieschel'
 	); 
     
 	$ch = curl_init(); 
 	curl_setopt_array($ch, $defaults); 
+	$data = json_decode(curl_exec($ch));
 	
-	$data = curl_exec($ch);
-	$info = curl_getinfo($ch);
-	$error = curl_error($ch);
-	$code = curl_errno($ch);
+	for($i = 0; $i < count($data); $i++) {
+		echo $data[$i]->name . "<br>";
+	}
 	
-	var_dump($error);
-	var_dump($info);
-	var_dump($data);
+	//var_dump($data);
 	curl_close($ch); 
 }
