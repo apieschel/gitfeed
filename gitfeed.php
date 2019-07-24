@@ -43,7 +43,8 @@ function git_feed() {
 		$current = $data[$i];
 		array_push($array, $current->name);
 		array_push($array, $current->description);
-		$repos[strtotime($data[$i]->updated_at)] = $array;
+		// subtract five hours to adjust to U.S. Central time
+		$repos[strtotime($data[$i]->updated_at) - (60 * 60 * 5)] = $array;
 	}
 	
 	// sort the array in reverse order according to the timestamps
@@ -51,10 +52,11 @@ function git_feed() {
 	
 	// display the data
 	echo '<div class="container-fluid">';
-	echo '<h2 style="font-size:1.4rem; font-weight:normal; text-align:center;">A feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
+	echo '<h2 style="font-size:1.4rem; font-weight:normal; text-align:center; margin-bottom:20px;">This custom WordPress plugin displays a feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
+	echo '<p style="text-align:center; margin-bottom:40px;"><a target="_blank" style="color:#0000EE;" href="https://github.com/apieschel">Link to apieschel&apos;s Github Page</a></p>';
 		foreach($repos as $key=>$value) {	
 			echo '<p style="margin:20px;"><strong>' . $value[0] . '</strong>: ' . $value[1];
-			echo ' <span style="margin-left:5px;"><em>Last updated</em>: ' . date("F j, Y, g:i a", $key) . '</span></p>';
+			echo ' <span style="color:green; margin-left:5px;"><em>Last updated</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
 		}
 	echo '</div>';
 	
