@@ -70,8 +70,10 @@ function git_feed() {
 }
 
 function repo_feed() {
+	// https://stackoverflow.com/questions/9179828/github-api-retrieve-all-commits-for-all-branches-for-a-repo
+	
 	$defaults = array( 
-		CURLOPT_URL => 'https://api.github.com/repos/apieschel/gitfeed/git/commits/535d9561a5fee12050476aa9e62392ab55451dc6',
+		CURLOPT_URL => 'https://api.github.com/repos/apieschel/gitfeed/commits?per_page=100&sha=a6506ef9d22a2635ebfe55ed86c4b50c42d5ff93',
 		CURLOPT_HEADER => 0, 
 		CURLOPT_RETURNTRANSFER => TRUE,
 		CURLOPT_CAINFO => 'C:\users\apieschel\Desktop\gtrsoftware\cacert.pem',
@@ -82,6 +84,10 @@ function repo_feed() {
 	$ch = curl_init(); 
 	curl_setopt_array($ch, $defaults); 
 	$data = json_decode(curl_exec($ch));
-	var_dump($data);		
-	curl_close($ch);
+	foreach($data as $value) {		
+		echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:50%;">';
+			echo '<p><strong>Commit Message: </strong>' . $value->commit->message . '</p>';
+			echo '<br><br>';
+		echo '</div>';
+	}			
 }
