@@ -43,6 +43,7 @@ function git_feed() {
 		$current = $data[$i];
 		array_push($array, $current->name);
 		array_push($array, $current->description);
+		array_push($array, $current->language);
 		// subtract five hours to adjust to U.S. Central time
 		$repos[strtotime($data[$i]->updated_at) - (60 * 60 * 5)] = $array;
 	}
@@ -58,6 +59,7 @@ function git_feed() {
 			echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:50%;">';
 			echo '<p><strong>' . $value[0] . '</strong>: ' . $value[1] . '</p>';
 			echo '<p><span style="color:green;"><em>Last updated</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
+			echo '<p><em>Language</em>: ' . $value[2] . '</p>';
 			echo '</div>';
 		}
 	echo '</div>';
