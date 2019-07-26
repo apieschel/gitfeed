@@ -87,6 +87,7 @@ function repo_feed() {
 	foreach($data as $value) {		
 		echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:50%;">';
 			echo '<p><strong>Commit Message: </strong>' . $value->commit->message . '</p>';
+			echo '<p><strong>Commit Date: </strong>' . date("F j, Y, g:i a", (strtotime($value->commit->committer->date) - (60 * 60 * 5))) . '</p>';
 			echo '<br><br>';
 		echo '</div>';
 	}			
