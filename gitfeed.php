@@ -55,8 +55,10 @@ function git_feed() {
 	echo '<h2 style="font-size:1.4rem; font-weight:normal; text-align:center; margin-bottom:20px;">This custom WordPress plugin displays a feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
 	echo '<p style="text-align:center; margin-bottom:40px;"><a target="_blank" style="color:#0000EE;" href="https://github.com/apieschel">Link to apieschel&apos;s Github Page</a></p>';
 		foreach($repos as $key=>$value) {	
-			echo '<p style="margin:20px;"><strong>' . $value[0] . '</strong>: ' . $value[1];
-			echo ' <span style="color:green; margin-left:5px;"><em>Last updated</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
+			echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:50%;">';
+			echo '<p><strong>' . $value[0] . '</strong>: ' . $value[1] . '</p>';
+			echo '<p><span style="color:green;"><em>Last updated</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
+			echo '</div>';
 		}
 	echo '</div>';
 	
