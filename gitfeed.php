@@ -14,6 +14,8 @@ License: GPLv2 or later
 Text Domain: gitfeed
 */
 
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
+
 // First, let's test out the Github API in a new shortcode
 add_shortcode( 'gitfeed', 'git_feed' );
 add_shortcode( 'repofeed', 'repo_feed' );
