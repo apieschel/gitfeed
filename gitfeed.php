@@ -16,11 +16,13 @@ Text Domain: gitfeed
 
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
-// First, let's test out the Github API in a new shortcode
-add_shortcode( 'gitfeed', 'git_feed' );
-add_shortcode( 'repofeed', 'repo_feed' );
+load_plugin_textdomain('gitfeed', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
-function git_feed() {
+// First, let's test out the Github API in a new shortcode
+add_shortcode( 'gitfeed', 'gf_git_feed' );
+add_shortcode( 'repofeed', 'gf_repo_feed' );
+
+function gf_git_feed() {
 	// set up local certificate to deal with https permissions
 	$certificate = "C:\users\apieschel\Desktop\gtrsoftware\cacert.pem";
 	$user = 'apieschel';
@@ -64,14 +66,16 @@ function git_feed() {
 		foreach($repos as $key=>$value) {	
 			echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:50%;">';
 				echo '<p><strong>' . $value[0] . '</strong>: ' . $value[1] . '</p>';
-				echo '<p><span style="color:green;"><em>Last updated</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
+				echo '<p><span style="color:green;"><em>';
+				esc_html_e('Last updated', 'gitfeed');
+				echo '</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
 				echo '<p><em>Language</em>: ' . $value[2] . '</p>';
 			echo '</div>';
 		}
 	echo '</div>'; 
 }
 
-function repo_feed() {
+function gf_repo_feed() {
 	// https://stackoverflow.com/questions/9179828/github-api-retrieve-all-commits-for-all-branches-for-a-repo
 	
 	$defaults = array( 
@@ -88,7 +92,9 @@ function repo_feed() {
 	$data = json_decode(curl_exec($ch));
 	foreach($data as $value) {		
 		echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:50%;">';
-			echo '<p><strong>Commit Message: </strong>' . $value->commit->message . '</p>';
+			echo '<p><strong>';
+			esc_html_e('Commit Message', 'gitfeed');
+			echo ': </strong>' . $value->commit->message . '</p>';
 			echo '<p><strong>Commit Date: </strong>' . date("F j, Y, g:i a", (strtotime($value->commit->committer->date) - (60 * 60 * 5))) . '</p>';
 			echo '<br><br>';
 		echo '</div>';
