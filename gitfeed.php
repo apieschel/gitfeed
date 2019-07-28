@@ -18,6 +18,12 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 load_plugin_textdomain('gitfeed', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
+if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'env.php' ) ) {
+	include_once 'env.php';
+}
+
+add_action('init', setUpEnv);
+
 // First, let's test out the Github API in a new shortcode
 add_shortcode( 'gitfeed', 'gf_git_feed' );
 add_shortcode( 'repofeed', 'gf_repo_feed' );
@@ -44,7 +50,9 @@ function gf_git_feed() {
 	$repos = array();
 	
 	if(gettype($data) == 'object') {
-		echo '<div class="container">Uh oh, it looks like you have exceeded the API limit.</div>';
+		echo '<div class="container">Uh oh, it looks like you have exceeded the API call limit.</div>';
+		print_r($_ENV);
+		echo getenv('CLIENT_ID');
 	} else {
 		// loop through the data, and create a new array with timestamps as keys
 		for($i = 0; $i < count($data); $i++) {
@@ -75,7 +83,9 @@ function gf_git_feed() {
 					echo '</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
 					echo '<p><em>Language</em>: ' . $value[2] . '</p>';
 				echo '</div>';
-
+				
+				// API call to each individual repo within the loop
+				/*
 				$defaults = array( 
 					CURLOPT_URL => 'https://api.github.com/users/' . $value[0] . '/commits',
 					CURLOPT_HEADER => 0, 
@@ -89,7 +99,7 @@ function gf_git_feed() {
 				curl_setopt_array($ch, $defaults); 
 				$data = json_decode(curl_exec($ch));
 				var_dump($data);
-				curl_close($ch);			
+				curl_close($ch); */			
 			}
 		echo '</div>';
 	}
