@@ -20,9 +20,8 @@ load_plugin_textdomain('gitfeed', false, basename( dirname( __FILE__ ) ) . '/lan
 
 if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'env.php' ) ) {
 	include_once 'env.php';
+	add_action('init', gf_set_up_env);
 }
-
-add_action('init', setUpEnv);
 
 // First, let's test out the Github API in a new shortcode
 add_shortcode( 'gitfeed', 'gf_git_feed' );
@@ -46,13 +45,12 @@ function gf_git_feed() {
 	$ch = curl_init(); 
 	curl_setopt_array($ch, $defaults); 
 	$data = json_decode(curl_exec($ch));
-	var_dump($data);
 	$repos = array();
+	
+	echo getenv('CLIENT_ID');
 	
 	if(gettype($data) == 'object') {
 		echo '<div class="container">Uh oh, it looks like you have exceeded the API call limit.</div>';
-		print_r($_ENV);
-		echo getenv('CLIENT_ID');
 	} else {
 		// loop through the data, and create a new array with timestamps as keys
 		for($i = 0; $i < count($data); $i++) {
