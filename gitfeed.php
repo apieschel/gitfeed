@@ -48,6 +48,7 @@ function gf_git_feed() {
 	$repos = array();
 	
 	echo getenv('CLIENT_ID');
+	var_dump($_ENV);
 	
 	if(gettype($data) == 'object') {
 		echo '<div class="container">Uh oh, it looks like you have exceeded the API call limit.</div>';
@@ -72,10 +73,15 @@ function gf_git_feed() {
 		echo '<div class="container-fluid">';
 			echo '<h2 style="font-size:1.4rem; font-weight:normal; text-align:center; margin-bottom:20px;">This custom WordPress plugin displays a feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
 			echo '<p style="text-align:center; margin-bottom:40px;"><a target="_blank" style="color:#0000EE;" href="https://github.com/apieschel">Link to apieschel&apos;s Github Page</a></p>';
-
+			
+		
+			$count = 1;
 			foreach($repos as $key=>$value) {	
+				if($count > 10) {
+					break;
+				}
 				echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:50%;">';
-					echo '<p><strong>' . $value[0] . '</strong>: ' . $value[1] . '</p>';
+					echo '<p>' . $count . '. <strong>' . $value[0] . '</strong>: ' . $value[1] . '</p>';
 					echo '<p><span style="color:green;"><em>';
 					esc_html_e('Last updated', 'gitfeed');
 					echo '</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
@@ -97,7 +103,8 @@ function gf_git_feed() {
 				curl_setopt_array($ch, $defaults); 
 				$data = json_decode(curl_exec($ch));
 				var_dump($data);
-				curl_close($ch); */			
+				curl_close($ch); */
+				$count++;
 			}
 		echo '</div>';
 	}
