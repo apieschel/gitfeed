@@ -63,48 +63,62 @@ function gf_git_feed() {
 			// subtract five hours to adjust to U.S. Central time
 			$repos[strtotime($data[$i]->updated_at) - (60 * 60 * 5)] = $array;
 		}
-
+		curl_close($ch);
+		
+		
 		// sort the array in reverse order according to the timestamps
 		krsort($repos);
-
-		curl_close($ch);
+		
+		// if there are more than 10 repos, then only keep the 10 most recently updated
+		if(count($repos) > 9) {
+			$repos = array_slice($repos, 0, 10);
+		}
+		
+		// Set up multi curl request
+		foreach($repos as $key=>$value) {
+			// https://stackoverflow.com/questions/9257505/using-braces-with-dynamic-variable-names-in-php
+			${'ch' . $key} = curl_init();
+		
+			curl_setopt(${'ch' . $key}, CURLOPT_URL, 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits');
+			curl_setopt(${'ch' . $key}, CURLOPT_HEADER, 0);
+			curl_setopt(${'ch' . $key}, CURLOPT_RETURNTRANSFER, TRUE);
+			curl_setopt(${'ch' . $key}, CURLOPT_CAINFO, $certificate);
+			curl_setopt(${'ch' . $key}, CURLOPT_CAPATH, $certificate);
+			curl_setopt(${'ch' . $key}, CURLOPT_USERAGENT, $user);
+			$count++;
+		}
+		
+		$mh = curl_multi_init();
+		
+		foreach($repos as $key=>$value) {
+			curl_multi_add_handle($mh, ${'ch' . $key});
+		}
+		
+		$running = null;
+		do {
+			curl_multi_exec($mh, $running);
+		} while ($running);
+		
+		foreach($repos as $key=>$value) {
+			curl_multi_remove_handle($mh, ${'ch' . $key});
+		}
+		curl_multi_close($mh);
 
 		// display the data
 		echo '<div class="container-fluid">';
 			echo '<h2 style="font-size:1.4rem; font-weight:normal; text-align:center; margin-bottom:20px;">This custom WordPress plugin displays a feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
 			echo '<p style="text-align:center; margin-bottom:40px;"><a target="_blank" style="color:#0000EE;" href="https://github.com/apieschel">Link to apieschel&apos;s Github Page</a></p>';
-			
-		
-			$count = 1;
+				
 			foreach($repos as $key=>$value) {	
-				if($count > 10) {
-					break;
-				}
 				echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:50%;">';
-					echo '<p>' . $count . '. <strong>' . $value[0] . '</strong>: ' . $value[1] . '</p>';
+					echo '<p>' . $key . '. <strong>' . $value[0] . '</strong>: ' . $value[1] . '</p>';
 					echo '<p><span style="color:green;"><em>';
 					esc_html_e('Last updated', 'gitfeed');
 					echo '</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
 					echo '<p><em>Language</em>: ' . $value[2] . '</p>';
 				echo '</div>';
-				
-				// API call to each individual repo within the loop
-				/*
-				$defaults = array( 
-					CURLOPT_URL => 'https://api.github.com/users/' . $value[0] . '/commits',
-					CURLOPT_HEADER => 0, 
-					CURLOPT_RETURNTRANSFER => TRUE,
-					CURLOPT_CAINFO => $certificate,
-					CURLOPT_CAPATH => $certificate,
-					CURLOPT_USERAGENT => 'apieschel'
-				); 
-
-				$ch = curl_init(); 
-				curl_setopt_array($ch, $defaults); 
-				$data = json_decode(curl_exec($ch));
-				var_dump($data);
-				curl_close($ch); */
-				$count++;
+				$response = curl_multi_getcontent(${'ch' . $key});
+				var_dump($response);
 			}
 		echo '</div>';
 	}
