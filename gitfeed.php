@@ -39,7 +39,7 @@ function gf_git_feed() {
 		CURLOPT_RETURNTRANSFER => TRUE,
 		CURLOPT_CAINFO => $certificate,
 		CURLOPT_CAPATH => $certificate,
-		CURLOPT_USERAGENT => 'apieschel'
+		CURLOPT_USERAGENT => $user
 	); 
 
 	$ch = curl_init(); 
@@ -106,13 +106,16 @@ function gf_git_feed() {
 function gf_repo_feed() {
 	// https://stackoverflow.com/questions/9179828/github-api-retrieve-all-commits-for-all-branches-for-a-repo
 	
+	$certificate = "C:\users\apieschel\Desktop\gtrsoftware\cacert.pem";
+	$user = 'apieschel';
+	
 	$defaults = array( 
-		CURLOPT_URL => 'https://api.github.com/repos/apieschel/gitfeed/commits?per_page=100&sha=a6506ef9d22a2635ebfe55ed86c4b50c42d5ff93',
+		CURLOPT_URL => 'https://api.github.com/repos/' . $user . '/gitfeed/commits?per_page=100&sha=a6506ef9d22a2635ebfe55ed86c4b50c42d5ff93',
 		CURLOPT_HEADER => 0, 
 		CURLOPT_RETURNTRANSFER => TRUE,
-		CURLOPT_CAINFO => 'C:\users\apieschel\Desktop\gtrsoftware\cacert.pem',
-		CURLOPT_CAPATH => 'C:\users\apieschel\Desktop\gtrsoftware\cacert.pem',
-		CURLOPT_USERAGENT => 'apieschel'
+		CURLOPT_CAINFO => $certificate,
+		CURLOPT_CAPATH => $certificate,
+		CURLOPT_USERAGENT => $user
 	); 
 
 	$ch = curl_init(); 
