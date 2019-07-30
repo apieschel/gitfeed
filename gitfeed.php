@@ -155,8 +155,8 @@ function gf_git_feed() {
 			echo '<p style="text-align:center; margin-bottom:40px;"><a target="_blank" style="color:#0000EE;" href="https://github.com/apieschel">Link to apieschel&apos;s Github Page</a></p>';
 				
 			foreach($repos as $key=>$value) {	
-				echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:50%;">';
-					echo '<p>' . ($key + 1) . '. <strong>' . $value[0] . '</strong>: ' . $value[1] . '</p>';
+				echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:75%;">';
+					echo '<p><strong>' . $value[0] . '</strong>: ' . $value[1] . '</p>';
 					echo '<p><span style="color:green;"><em>';
 					esc_html_e('Last updated', 'gitfeed');
 					echo '</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
@@ -169,7 +169,11 @@ function gf_git_feed() {
 					echo '<p><em>Total Code Changes</em>: ' . $response2->stats->total . '</p>';	
 					echo '<p><em>Lines Added</em>: ' . $response2->stats->additions . '</p>';	
 					echo '<p><em>Lines Deleted</em>: ' . $response2->stats->deletions . '</p>';	
-
+				
+					foreach($response2->files as $key=>$value) {
+							echo '<p><em>File Changed</em>: ' . $response2->files[$key]->filename . '</p>';
+							echo '<p><em>Patch</em>: ' . $response2->files[$key]->patch . '</p>';
+					}
 				echo '</div>';
 			}
 		echo '</div>';
