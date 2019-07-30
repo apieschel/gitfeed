@@ -156,11 +156,10 @@ function gf_git_feed() {
 				
 			foreach($repos as $key=>$value) {	
 				echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:75%;">';
-					echo '<p><strong>' . $value[0] . '</strong>: ' . $value[1] . '</p>';
+					echo '<h3 style="text-align:center; margin-bottom:20px;"><strong>' . $value[0] . '</strong>: ' . $value[1] . '</h3>';
 					echo '<p><span style="color:green;"><em>';
 					esc_html_e('Last updated', 'gitfeed');
 					echo '</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
-					echo '<p><em>Language</em>: ' . $value[2] . '</p>';
 				
 					$response = json_decode(curl_multi_getcontent(${'ch' . $key}));
 					echo '<p><em>Latest Commit</em>: ' . $response[0]->commit->message . '</p>';
