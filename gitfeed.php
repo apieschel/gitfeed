@@ -29,8 +29,9 @@ add_shortcode( 'repofeed', 'gf_repo_feed' );
 
 function gf_git_feed() {
 	// set up local certificate to deal with https permissions
-	$certificate = "C:\users\apieschel\Desktop\gtrsoftware\cacert.pem";
-	$user = 'apieschel';
+	$certificate = getenv('CERTIFICATE');
+	
+	$user = getenv('USER');
 	$password = getenv('PASSWORD');	
 	
 	// set up GET request to Github API
