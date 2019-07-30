@@ -31,24 +31,30 @@ function gf_git_feed() {
 	// set up local certificate to deal with https permissions
 	$certificate = "C:\users\apieschel\Desktop\gtrsoftware\cacert.pem";
 	$user = 'apieschel';
+	$password = getenv('PASSWORD');	
 	
 	// set up GET request to Github API
 	$defaults = array( 
 		CURLOPT_URL => 'https://api.github.com/users/' . $user . '/repos',
 		CURLOPT_HEADER => 0, 
-		CURLOPT_RETURNTRANSFER => TRUE,
+		CURLOPT_RETURNTRANSFER => 1,
 		CURLOPT_CAINFO => $certificate,
 		CURLOPT_CAPATH => $certificate,
-		CURLOPT_USERAGENT => $user
+		CURLOPT_USERAGENT => $user,
+		CURLOPT_TIMEOUT => 30,
+    CURLOPT_RETURNTRANSFER => 1,
+		CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+		CURLOPT_USERPWD => $user . ':' . $password
 	); 
 
 	$ch = curl_init(); 
 	curl_setopt_array($ch, $defaults); 
-	$data = json_decode(curl_exec($ch));
-	$repos = array();
+	$data = curl_exec($ch);
+	//var_dump($data);
+	$data = json_decode($data);
+	$info = curl_getinfo ($ch);
 	
-	echo getenv('CLIENT_ID');
-	var_dump($_ENV);
+	$repos = array();
 	
 	if(gettype($data) == 'object') {
 		echo '<div class="container">Uh oh, it looks like you have exceeded the API call limit.</div>';
@@ -81,11 +87,14 @@ function gf_git_feed() {
 		
 			curl_setopt(${'ch' . $key}, CURLOPT_URL, 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits');
 			curl_setopt(${'ch' . $key}, CURLOPT_HEADER, 0);
-			curl_setopt(${'ch' . $key}, CURLOPT_RETURNTRANSFER, TRUE);
+			curl_setopt(${'ch' . $key}, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt(${'ch' . $key}, CURLOPT_CAINFO, $certificate);
 			curl_setopt(${'ch' . $key}, CURLOPT_CAPATH, $certificate);
 			curl_setopt(${'ch' . $key}, CURLOPT_USERAGENT, $user);
-			$count++;
+			curl_setopt(${'ch' . $key}, CURLOPT_TIMEOUT, 30);
+			curl_setopt(${'ch' . $key}, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt(${'ch' . $key}, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+			curl_setopt(${'ch' . $key}, CURLOPT_USERPWD, $user . ':' . $password);
 		}
 		
 		$mh = curl_multi_init();
@@ -117,8 +126,7 @@ function gf_git_feed() {
 					echo '</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
 					echo '<p><em>Language</em>: ' . $value[2] . '</p>';
 				
-					$response = curl_multi_getcontent(${'ch' . $key});
-					print_r($response);
+					$response = json_decode(curl_multi_getcontent(${'ch' . $key}));
 					echo '<p><em>Latest Commit</em>: ' . $response[0]->commit->message . '</p>';
 				echo '</div>';
 			}
