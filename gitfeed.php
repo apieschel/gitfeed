@@ -78,7 +78,7 @@ function gf_git_feed() {
 		
 		// if there are more than 10 repos, then only keep the 10 most recently updated
 		if(count($repos) > 9) {
-			$repos = array_slice($repos, 0, 10);
+			$repos = array_slice($repos, 0, 10, TRUE);
 		}
 		
 		// Set up multi curl request
