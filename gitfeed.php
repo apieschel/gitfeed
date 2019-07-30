@@ -113,6 +113,41 @@ function gf_git_feed() {
 			curl_multi_remove_handle($mh, ${'ch' . $key});
 		}
 		curl_multi_close($mh);
+		
+		// Set up multi curl request for commit stats
+		foreach($repos as $key=>$value) {
+			${'chc' . $key} = curl_init();
+			$response = json_decode(curl_multi_getcontent(${'ch' . $key}));
+			$sha = $response[0]->sha;
+			$url = 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits/' . $sha;
+		
+			curl_setopt(${'chc' . $key}, CURLOPT_URL, $url);
+			curl_setopt(${'chc' . $key}, CURLOPT_HEADER, 0);
+			curl_setopt(${'chc' . $key}, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt(${'chc' . $key}, CURLOPT_CAINFO, $certificate);
+			curl_setopt(${'chc' . $key}, CURLOPT_CAPATH, $certificate);
+			curl_setopt(${'chc' . $key}, CURLOPT_USERAGENT, $user);
+			curl_setopt(${'chc' . $key}, CURLOPT_TIMEOUT, 30);
+			curl_setopt(${'chc' . $key}, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt(${'chc' . $key}, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+			curl_setopt(${'chc' . $key}, CURLOPT_USERPWD, $user . ':' . $password);
+		}
+		
+		$mh = curl_multi_init();
+		
+		foreach($repos as $key=>$value) {
+			curl_multi_add_handle($mh, ${'chc' . $key});
+		}
+		
+		$running = null;
+		do {
+			curl_multi_exec($mh, $running);
+		} while ($running);
+		
+		foreach($repos as $key=>$value) {
+			curl_multi_remove_handle($mh, ${'chc' . $key});
+		}
+		curl_multi_close($mh);
 
 		// display the data
 		echo '<div class="container-fluid">';
@@ -129,6 +164,12 @@ function gf_git_feed() {
 				
 					$response = json_decode(curl_multi_getcontent(${'ch' . $key}));
 					echo '<p><em>Latest Commit</em>: ' . $response[0]->commit->message . '</p>';
+				
+					$response2 = json_decode(curl_multi_getcontent(${'chc' . $key}));
+					echo '<p><em>Total Code Changes</em>: ' . $response2->stats->total . '</p>';	
+					echo '<p><em>Lines Added</em>: ' . $response2->stats->additions . '</p>';	
+					echo '<p><em>Lines Deleted</em>: ' . $response2->stats->deletions . '</p>';	
+
 				echo '</div>';
 			}
 		echo '</div>';
@@ -136,11 +177,10 @@ function gf_git_feed() {
 }
 
 function gf_repo_feed() {
-	// https://stackoverflow.com/questions/9179828/github-api-retrieve-all-commits-for-all-branches-for-a-repo
-	
 	$certificate = "C:\users\apieschel\Desktop\gtrsoftware\cacert.pem";
 	$user = 'apieschel';
 	
+	// https://stackoverflow.com/questions/9179828/github-api-retrieve-all-commits-for-all-branches-for-a-repo
 	$defaults = array( 
 		CURLOPT_URL => 'https://api.github.com/repos/' . $user . '/gitfeed/commits?per_page=100&sha=a6506ef9d22a2635ebfe55ed86c4b50c42d5ff93',
 		CURLOPT_HEADER => 0, 
