@@ -63,8 +63,15 @@ function gf_git_feed() {
 			$repos = array_slice($repos, 0, 10, TRUE);
 		}
 		
+		$commits = array();
 		// Set up multi curl request
 		foreach($repos as $key=>$value) {
+			$url = 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits';
+			$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
+			$wpget = wp_remote_get( $url, array('headers' => $headers) );
+			$data = json_decode($wpget["body"]);
+			array_push($commits, $data);
+			/*
 			// https://stackoverflow.com/questions/9257505/using-braces-with-dynamic-variable-names-in-php
 			${'ch' . $key} = curl_init();
 		
@@ -78,8 +85,11 @@ function gf_git_feed() {
 			curl_setopt(${'ch' . $key}, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt(${'ch' . $key}, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 			curl_setopt(${'ch' . $key}, CURLOPT_USERPWD, $user . ':' . $password);
+			*/
 		}
+		var_dump($commits);
 		
+		/*
 		$mh = curl_multi_init();
 		
 		foreach($repos as $key=>$value) {
@@ -94,7 +104,7 @@ function gf_git_feed() {
 		foreach($repos as $key=>$value) {
 			curl_multi_remove_handle($mh, ${'ch' . $key});
 		}
-		curl_multi_close($mh);
+		curl_multi_close($mh);*/
 		
 		// Set up multi curl request for commit stats
 		foreach($repos as $key=>$value) {
