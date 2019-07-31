@@ -69,26 +69,8 @@ function gf_git_feed() {
 			$data = json_decode($wpget["body"]);
 			array_push($commits, $data);
 		}
-		
-		/*
-		$mh = curl_multi_init();
-		
-		foreach($repos as $key=>$value) {
-			curl_multi_add_handle($mh, ${'ch' . $key});
-		}
-		
-		$running = null;
-		do {
-			curl_multi_exec($mh, $running);
-		} while ($running);
-		
-		foreach($repos as $key=>$value) {
-			curl_multi_remove_handle($mh, ${'ch' . $key});
-		}
-		curl_multi_close($mh);*/
-		
 
-		// Set up multi curl request for commit stats
+		// loop to grab commit stats and patch data for each commit
 		foreach($commits as $key=>$value) {
 			$sha = $value[0]->sha;
 			$url = $value[0]->url;
@@ -96,24 +78,8 @@ function gf_git_feed() {
 			$wpget = wp_remote_get( $url, array('headers' => $headers) );
 			$data = json_decode($wpget["body"]);
 			array_push($commit_stats, $data);
-			/*
-			${'chc' . $key} = curl_init();
-			$response = json_decode(curl_multi_getcontent(${'ch' . $key}));
-			$sha = $response[0]->sha;
-			$url = 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits/' . $sha;
-		
-			curl_setopt(${'chc' . $key}, CURLOPT_URL, $url);
-			curl_setopt(${'chc' . $key}, CURLOPT_HEADER, 0);
-			curl_setopt(${'chc' . $key}, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(${'chc' . $key}, CURLOPT_CAINFO, $certificate);
-			curl_setopt(${'chc' . $key}, CURLOPT_CAPATH, $certificate);
-			curl_setopt(${'chc' . $key}, CURLOPT_USERAGENT, $user);
-			curl_setopt(${'chc' . $key}, CURLOPT_TIMEOUT, 30);
-			curl_setopt(${'chc' . $key}, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(${'chc' . $key}, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt(${'chc' . $key}, CURLOPT_USERPWD, $user . ':' . $password);
-			*/
 		}
+		
 		//var_dump($commit_stats);
 		/*
 		
