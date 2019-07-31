@@ -64,6 +64,7 @@ function gf_git_feed() {
 		}
 		
 		$commits = array();
+		$commit_stats = array();
 		// Set up multi curl request
 		foreach($repos as $key=>$value) {
 			$url = 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits';
@@ -87,7 +88,6 @@ function gf_git_feed() {
 			curl_setopt(${'ch' . $key}, CURLOPT_USERPWD, $user . ':' . $password);
 			*/
 		}
-		var_dump($commits);
 		
 		/*
 		$mh = curl_multi_init();
@@ -106,8 +106,16 @@ function gf_git_feed() {
 		}
 		curl_multi_close($mh);*/
 		
+
 		// Set up multi curl request for commit stats
-		foreach($repos as $key=>$value) {
+		foreach($commits as $key=>$value) {
+			$sha = $value[0]->sha;
+			$url = $value[0]->url;
+			$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
+			$wpget = wp_remote_get( $url, array('headers' => $headers) );
+			$data = json_decode($wpget["body"]);
+			array_push($commit_stats, $data);
+			/*
 			${'chc' . $key} = curl_init();
 			$response = json_decode(curl_multi_getcontent(${'ch' . $key}));
 			$sha = $response[0]->sha;
@@ -123,7 +131,10 @@ function gf_git_feed() {
 			curl_setopt(${'chc' . $key}, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt(${'chc' . $key}, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 			curl_setopt(${'chc' . $key}, CURLOPT_USERPWD, $user . ':' . $password);
+			*/
 		}
+		//var_dump($commit_stats);
+		/*
 		
 		$mh = curl_multi_init();
 		
@@ -140,12 +151,14 @@ function gf_git_feed() {
 			curl_multi_remove_handle($mh, ${'chc' . $key});
 		}
 		curl_multi_close($mh);
-
+		*/
+		
 		// display the data
 		echo '<div class="container-fluid">';
 			echo '<h2 style="font-size:1.4rem; font-weight:normal; text-align:center; margin-bottom:20px;">This custom WordPress plugin displays a feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
 			echo '<p style="text-align:center; margin-bottom:40px;"><a target="_blank" style="color:#0000EE;" href="https://github.com/apieschel">Link to apieschel&apos;s Github Page</a></p>';
-				
+			
+			$count = 0;
 			foreach($repos as $key=>$value) {	
 				echo '<div style="background:#edffed; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:75%;">';
 					echo '<h3 style="text-align:center; font-size:28px; margin-bottom:20px;"><strong>' . $value[0] . '</strong>: ' . $value[1] . '</h3>';
@@ -153,10 +166,10 @@ function gf_git_feed() {
 					esc_html_e('Last updated', 'gitfeed');
 					echo '</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
 				
-					$response = json_decode(curl_multi_getcontent(${'ch' . $key}));
+					$response = $commits[$count];
 					echo '<p><em>Latest Commit</em>: ' . $response[0]->commit->message . '</p>';
 				
-					$response2 = json_decode(curl_multi_getcontent(${'chc' . $key}));
+					$response2 = $commit_stats[$count];
 					echo '<p><em>Total Code Changes</em>: ' . $response2->stats->total . '</p>';	
 					echo '<p><em>Lines Added</em>: ' . $response2->stats->additions . '</p>';	
 					echo '<p><em>Lines Deleted</em>: ' . $response2->stats->deletions . '</p>';	
@@ -166,6 +179,7 @@ function gf_git_feed() {
 							echo '<p><em>Patch</em>: ' . esc_html($response2->files[$key]->patch) . '</p>';
 					}
 				echo '</div>';
+				$count++;
 			}
 		echo '</div>';
 	}
