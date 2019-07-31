@@ -30,37 +30,11 @@ add_shortcode( 'repofeed', 'gf_repo_feed' );
 function gf_git_feed() {
 	// set up local certificate to deal with https permissions
 	$certificate = getenv('CERTIFICATE');
-	
 	$user = getenv('USER');
 	$password = getenv('PASSWORD');	
 	$url = 'https://api.github.com/users/' . $user . '/repos';
 	$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
-		
 	$wpget = wp_remote_get( $url, array('headers' => $headers) );
-	//var_dump($wpget["headers"]);
-	
-	/* set up GET request to Github API
-	$defaults = array( 
-		CURLOPT_URL => $url,
-		CURLOPT_HEADER => 0, 
-		CURLOPT_RETURNTRANSFER => 1,
-		CURLOPT_CAINFO => $certificate,
-		CURLOPT_CAPATH => $certificate,
-		CURLOPT_USERAGENT => $user,
-		CURLOPT_TIMEOUT => 30,
-    CURLOPT_RETURNTRANSFER => 1,
-		CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
-		CURLOPT_USERPWD => $user . ':' . $password
-	); 
-
-	$ch = curl_init(); 
-	curl_setopt_array($ch, $defaults); 
-	$data = curl_exec($ch);
-	//var_dump($data);
-	$data = json_decode($data);
-	$info = curl_getinfo ($ch);
-	*/
-	
 	$data = json_decode($wpget["body"]);
 	$repos = array();
 	
