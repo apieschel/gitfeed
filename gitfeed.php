@@ -58,6 +58,7 @@ function gf_git_feed() {
 		krsort($repos);
 		
 		// if there are more than 10 repos, then only keep the 10 most recently updated
+		// maintain the existing keys for the timestamps
 		if(count($repos) > 9) {
 			$repos = array_slice($repos, 0, 10, TRUE);
 		}
