@@ -83,7 +83,7 @@ function gf_git_feed() {
 		// display the data
 		echo '<div class="container-fluid">';
 			echo '<h2 style="font-size:1.4rem; font-weight:normal; text-align:center; margin-bottom:20px;">This custom WordPress plugin displays a feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
-			echo '<p style="text-align:center; margin-bottom:40px;"><a target="_blank" style="color:#0000EE;" href="https://github.com/apieschel">Link to apieschel&apos;s Github Page</a></p>';
+			echo '<p style="text-align:center; margin-bottom:40px;"><a target="_blank" style="color:#0000EE;" href="https://github.com/' . $user . '">Link to' . $user . '&apos;s Github Page</a></p>';
 			
 			$count = 0;
 			foreach($repos as $key=>$value) {	
