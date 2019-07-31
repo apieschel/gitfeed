@@ -28,7 +28,6 @@ add_shortcode( 'gitfeed', 'gf_git_feed' );
 add_shortcode( 'repofeed', 'gf_repo_feed' );
 
 function gf_git_feed() {
-	// set up local certificate to deal with https permissions
 	$user = getenv('USER');
 	$password = getenv('PASSWORD');	
 	$url = 'https://api.github.com/users/' . $user . '/repos';
