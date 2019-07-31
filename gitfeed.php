@@ -23,9 +23,7 @@ if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'env.php' ) )
 	add_action('init', gf_set_up_env);
 }
 
-// First, let's test out the Github API in a new shortcode
 add_shortcode( 'gitfeed', 'gf_git_feed' );
-add_shortcode( 'repofeed', 'gf_repo_feed' );
 
 function gf_git_feed() {
 	$user = getenv('USER');
@@ -181,32 +179,4 @@ function gf_git_feed() {
 			}
 		echo '</div>';
 	}
-}
-
-function gf_repo_feed() {
-	$certificate = "C:\users\apieschel\Desktop\gtrsoftware\cacert.pem";
-	$user = 'apieschel';
-	
-	// https://stackoverflow.com/questions/9179828/github-api-retrieve-all-commits-for-all-branches-for-a-repo
-	$defaults = array( 
-		CURLOPT_URL => 'https://api.github.com/repos/' . $user . '/gitfeed/commits?per_page=100&sha=a6506ef9d22a2635ebfe55ed86c4b50c42d5ff93',
-		CURLOPT_HEADER => 0, 
-		CURLOPT_RETURNTRANSFER => TRUE,
-		CURLOPT_CAINFO => $certificate,
-		CURLOPT_CAPATH => $certificate,
-		CURLOPT_USERAGENT => $user
-	); 
-
-	$ch = curl_init(); 
-	curl_setopt_array($ch, $defaults); 
-	$data = json_decode(curl_exec($ch));
-	foreach($data as $value) {		
-		echo '<div style="background:#eee; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:50%;">';
-			echo '<p><strong>';
-			esc_html_e('Commit Message', 'gitfeed');
-			echo ': </strong>' . $value->commit->message . '</p>';
-			echo '<p><strong>Commit Date: </strong>' . date("F j, Y, g:i a", (strtotime($value->commit->committer->date) - (60 * 60 * 5))) . '</p>';
-			echo '<br><br>';
-		echo '</div>';
-	}			
 }
