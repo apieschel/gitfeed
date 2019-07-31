@@ -35,7 +35,7 @@ function gf_git_feed() {
 	$repos = array();
 	
 	if(gettype($data) == 'object') {
-		echo '<div class="container">Uh oh, it looks like you have exceeded the API call limit.</div>';
+		echo '<div class="container">Uh oh, it looks like either your credentials are wrong, or you have exceeded the API call limit.</div>';
 	} else {
 		// loop through the data, and create a new array with timestamps as keys
 		for($i = 0; $i < count($data); $i++) {
@@ -49,7 +49,6 @@ function gf_git_feed() {
 		}
 		curl_close($ch);
 		
-		
 		// sort the array in reverse order according to the timestamps
 		krsort($repos);
 		
@@ -61,28 +60,14 @@ function gf_git_feed() {
 		
 		$commits = array();
 		$commit_stats = array();
-		// Set up multi curl request
+		
+		// loop to grab latest commit from each repo
 		foreach($repos as $key=>$value) {
 			$url = 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits';
 			$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
 			$wpget = wp_remote_get( $url, array('headers' => $headers) );
 			$data = json_decode($wpget["body"]);
 			array_push($commits, $data);
-			/*
-			// https://stackoverflow.com/questions/9257505/using-braces-with-dynamic-variable-names-in-php
-			${'ch' . $key} = curl_init();
-		
-			curl_setopt(${'ch' . $key}, CURLOPT_URL, 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits');
-			curl_setopt(${'ch' . $key}, CURLOPT_HEADER, 0);
-			curl_setopt(${'ch' . $key}, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(${'ch' . $key}, CURLOPT_CAINFO, $certificate);
-			curl_setopt(${'ch' . $key}, CURLOPT_CAPATH, $certificate);
-			curl_setopt(${'ch' . $key}, CURLOPT_USERAGENT, $user);
-			curl_setopt(${'ch' . $key}, CURLOPT_TIMEOUT, 30);
-			curl_setopt(${'ch' . $key}, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt(${'ch' . $key}, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt(${'ch' . $key}, CURLOPT_USERPWD, $user . ':' . $password);
-			*/
 		}
 		
 		/*
