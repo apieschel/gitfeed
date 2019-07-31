@@ -80,26 +80,6 @@ function gf_git_feed() {
 			array_push($commit_stats, $data);
 		}
 		
-		//var_dump($commit_stats);
-		/*
-		
-		$mh = curl_multi_init();
-		
-		foreach($repos as $key=>$value) {
-			curl_multi_add_handle($mh, ${'chc' . $key});
-		}
-		
-		$running = null;
-		do {
-			curl_multi_exec($mh, $running);
-		} while ($running);
-		
-		foreach($repos as $key=>$value) {
-			curl_multi_remove_handle($mh, ${'chc' . $key});
-		}
-		curl_multi_close($mh);
-		*/
-		
 		// display the data
 		echo '<div class="container-fluid">';
 			echo '<h2 style="font-size:1.4rem; font-weight:normal; text-align:center; margin-bottom:20px;">This custom WordPress plugin displays a feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
