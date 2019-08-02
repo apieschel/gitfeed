@@ -34,8 +34,8 @@ function gf_git_feed() {
 	$data = json_decode($wpget["body"]);
 	$repos = array();
 	
-	if(gettype($data) == 'object') {
-		echo '<div class="container">Uh oh, it looks like either your credentials are wrong, or you have exceeded the API call limit.</div>';
+	if(gettype($data) == 'object' OR !$password) {
+		echo '<div class="container">Uh oh, it looks like either your credentials need to be entered, or you have exceeded the API call limit.</div>';
 	} else {
 		// loop through the data, and create a new array with timestamps as keys
 		for($i = 0; $i < count($data); $i++) {
@@ -146,7 +146,7 @@ function gf_plugin_options() {
      wp_die( __( "You do not have sufficient permissions to access this page." ) );
   }
 	
-	if ( isset($_GET['status']) && $_GET['status']=='success') { ?>
+	if ( isset($_GET['status']) AND $_GET['status']=='success') { ?>
    <div id="message" class="updated notice is-dismissible">
       <p><?php esc_html_e("Settings updated!", "gitfeed"); ?></p>
       <button type="button" class="notice-dismiss">
