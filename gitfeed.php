@@ -166,7 +166,7 @@ function gf_plugin_options() {
 
 		<p>
 			<label><?php esc_html_e("GitHub Password: ", "gitfeed"); ?></label>
-			<input class="" type="text" name="gf_pass" value="<?php echo esc_attr(get_option('gf_pass')); ?>" />
+			<input class="" type="password" name="gf_pass" value="<?php echo esc_attr(get_option('gf_pass')); ?>" />
 		</p>
 
 		<input class="button button-primary" type="submit" value="<?php esc_html_e("Save", "gitfeed"); ?>" />
