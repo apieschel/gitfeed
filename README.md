@@ -4,3 +4,4 @@ TODO:
 1. Use transients to cache data, so I'm not resending the api requests every time the page is refreshed.
 2. Implement object orientation.
 3. Implement OAuth 2.0 Authentication.
+4. Rewrite remaining asynchronous requests code to use the WordPress Requests class.
