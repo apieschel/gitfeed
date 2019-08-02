@@ -144,6 +144,22 @@ function gf_plugin_menu_func() {
 function gf_plugin_options() {
    if ( !current_user_can( "manage_options" ) )  {
       wp_die( __( "You do not have sufficient permissions to access this page." ) );
-   }
-   echo "Hello world!";
-}
+   } ?>
+		 
+	<form method="post" action="<?php echo esc_url(admin_url( 'admin-post.php')); ?>">
+		<input type="hidden" name="action" value="update_github_settings" />
+
+		<h3><?php esc_html_e("GitHub Account Information", "gitfeed"); ?></h3>
+		<p>
+			<label><?php esc_html_e("GitHub User: ", "gitfeed"); ?></label>
+			<input class="" type="text" name="gf_user" value="<?php echo esc_attr(get_option('gf_user')); ?>" />
+		</p>
+
+		<p>
+			<label><?php esc_html_e("GitHub Password: ", "gitfeed"); ?></label>
+			<input class="" type="text" name="gf_pass" value="<?php echo esc_attr(get_option('gf_pass')); ?>" />
+		</p>
+
+		<input class="button button-primary" type="submit" value="<?php esc_html_e("Save", "gitfeed"); ?>" />
+	</form> 
+<?php }
