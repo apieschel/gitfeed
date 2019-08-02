@@ -142,10 +142,19 @@ function gf_plugin_menu_func() {
 
 // Print the markup for the page
 function gf_plugin_options() {
-   if ( !current_user_can( "manage_options" ) )  {
-      wp_die( __( "You do not have sufficient permissions to access this page." ) );
-   } ?>
-		 
+  if ( !current_user_can( "manage_options" ) )  {
+     wp_die( __( "You do not have sufficient permissions to access this page." ) );
+  }
+	
+	if ( isset($_GET['status']) && $_GET['status']=='success') { ?>
+   <div id="message" class="updated notice is-dismissible">
+      <p><?php esc_html_e("Settings updated!", "gitfeed"); ?></p>
+      <button type="button" class="notice-dismiss">
+         <span class="screen-reader-text"><?php esc_html_e("Dismiss this notice.", "gitfeed"); ?></span>
+      </button>
+   </div>
+	<?php } ?>	 
+	
 	<form method="post" action="<?php echo esc_url(admin_url( 'admin-post.php')); ?>">
 		<input type="hidden" name="action" value="update_github_settings" />
 
