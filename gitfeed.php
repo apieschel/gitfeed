@@ -31,7 +31,6 @@ function gf_git_feed() {
 	$url = 'https://api.github.com/users/' . $user . '/repos';
 	$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
 	$wpget = wp_remote_get( $url, array('headers' => $headers) );
-	//var_dump($wpget);
 	$data = json_decode($wpget["body"]);
 	$repos = array();
 	
@@ -62,16 +61,6 @@ function gf_git_feed() {
 		$args = array();
 		$commits = array();
 		$commit_stats = array();
-		
-		/*
-		// loop to grab latest commit from each repo
-		foreach($repos as $key=>$value) {
-			$url = 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits';
-			$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
-			$wpget = wp_remote_get( $url, array('headers' => $headers) );
-			$data = json_decode($wpget["body"]);
-			array_push($commits, $data);
-		} */
 		
 		// use built-in Wordpress Requests class to send multiple aynchronous requests
 		foreach($repos as $key=>$value) {
