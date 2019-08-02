@@ -83,7 +83,7 @@ function gf_git_feed() {
 		$responses = Requests::request_multiple($args);
 
 		foreach ($responses as $response) {
-				if ($response->status_code !== 200) {
+				if (!is_a( $response, 'Requests_Response' )) {
 						echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
 						break;
 				}
