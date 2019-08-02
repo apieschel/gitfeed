@@ -127,7 +127,7 @@ function gf_git_feed() {
 	}
 }
 
-// Set up options page.
+// Set up admin options page
 // https://www.smashingmagazine.com/2016/03/making-a-wordpress-plugin-that-uses-service-apis/
 add_action( "admin_menu", "gf_plugin_menu_func" );
 function gf_plugin_menu_func() {
