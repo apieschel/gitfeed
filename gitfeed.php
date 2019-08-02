@@ -26,8 +26,8 @@ if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'env.php' ) )
 add_shortcode( 'gitfeed', 'gf_git_feed' );
 
 function gf_git_feed() {
-	$user = getenv('USER');
-	$password = getenv('PASSWORD');	
+	$user = get_option('gf_user');
+	$password = get_option('gf_pass');
 	$url = 'https://api.github.com/users/' . $user . '/repos';
 	$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
 	$wpget = wp_remote_get( $url, array('headers' => $headers) );
