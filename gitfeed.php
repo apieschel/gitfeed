@@ -163,3 +163,5 @@ function gf_plugin_options() {
 		<input class="button button-primary" type="submit" value="<?php esc_html_e("Save", "gitfeed"); ?>" />
 	</form> 
 <?php }
+
+add_action( 'admin_post_update_github_settings', 'github_handle_save' );
