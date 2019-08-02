@@ -164,4 +164,23 @@ function gf_plugin_options() {
 	</form> 
 <?php }
 
-add_action( 'admin_post_update_github_settings', 'github_handle_save' );
+add_action( 'admin_post_update_github_settings', 'gf_handle_save' );
+
+function gf_handle_save() {
+   // Get the options that were sent
+   $user = (!empty($_POST["gf_user"])) ? $_POST["gf_user"] : NULL;
+   $pass = (!empty($_POST["gf_pass"])) ? $_POST["gf_pass"] : NULL;
+
+   // Validation
+
+   // Update the values
+   update_option( "gf_user", $user, TRUE );
+   update_option("gf_pass", $pass, TRUE);
+
+   // Redirect back to settings page
+   // The ?page=github corresponds to the "slug" 
+   // set in the fourth parameter of add_submenu_page() above.
+   $redirect_url = get_bloginfo("url") . "/wp-admin/options-general.php?page=gitfeed&status=success";
+   header("Location: ".$redirect_url);
+   exit;
+}
