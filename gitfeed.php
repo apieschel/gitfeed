@@ -34,7 +34,7 @@ function gf_git_feed() {
 	$data = json_decode($wpget["body"]);
 	$repos = array();
 	
-	if(gettype($data) == 'object' OR !$password) {
+	if(gettype($data) == 'object' OR !$password OR !$user) {
 		echo '<div class="container">Uh oh, it looks like either your credentials need to be entered, or you have exceeded the API call limit.</div>';
 	} else {
 		// loop through the data, and create a new array with timestamps as keys
