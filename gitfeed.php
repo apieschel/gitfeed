@@ -112,7 +112,9 @@ function gf_git_feed() {
 					echo '<p><em>Latest Commit</em>: ' . $response->commit->message . '</p>';
 				
 					$response2 = $commit_stats[$count];
-					echo '<p><em>Total Code Changes</em>: ' . $response2->stats->total . '</p>';	
+					echo '<p><em>';
+					esc_html_e('Total Code Changes: ', 'gitfeed');
+					echo '</em>: ' . $response2->stats->total . '</p>';	
 					echo '<p><em>Lines Added</em>: ' . $response2->stats->additions . '</p>';	
 					echo '<p><em>Lines Deleted</em>: ' . $response2->stats->deletions . '</p>';	
 				
