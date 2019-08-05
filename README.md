@@ -5,4 +5,5 @@ TODO:
 2. Implement object orientation.
 3. Implement OAuth 2.0 Authentication.
 
-~~4. Rewrite remaining asynchronous requests code to use the WordPress Requests class.~~
+COMPLETED: 
+~~Rewrite remaining asynchronous requests code to use the WordPress Requests class.~~
