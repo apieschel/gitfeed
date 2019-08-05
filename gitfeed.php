@@ -25,6 +25,17 @@ if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'env.php' ) )
 
 add_shortcode( 'gitfeed', 'gf_git_feed' );
 
+if ( ! class_exists( 'Gitfeed' ) ) {
+	/**
+	 * Class Gitfeed
+	 *
+	 * Main Plugin class. Intializes the plugin.
+	 */
+	class Gitfeed {
+	
+	}
+}
+
 function gf_git_feed() {
 	$user = get_option('gf_user');
 	$password = get_option('gf_pass');
@@ -210,3 +221,35 @@ function gf_handle_save() {
    header("Location: ".$redirect_url);
    exit;
 }
+
+if ( ! class_exists( 'Gitfeed' ) ) {
+	/**
+	 * Class Gitfeed
+	 *
+	 * Main Plugin class. Intializes the plugin.
+	 */
+	class Gitfeed {
+		
+		private static $instance = null;
+	
+		public static function get_instance() {
+			if ( ! self::$instance ) {
+				self::$instance = new self();
+			}
+
+			return self::$instance;
+		}
+		
+		/**
+		 * Gitfeed constructor.
+		 */
+		public function __construct() {
+			
+			
+		
+		}		
+	}
+}
+
+// Init the plugin and load the plugin instance for the first time.
+add_action( 'plugins_loaded', array( 'Gitfeed', 'get_instance' ) );
