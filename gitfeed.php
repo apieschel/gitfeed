@@ -84,16 +84,6 @@ function gf_git_feed() {
 		
 		krsort($commits);
 		$commits = array_values($commits);
-
-		// loop to grab latest commit stats and patch data for each commit 
-		/* foreach($commits as $key=>$value) {
-			$sha = $value->sha;
-			$url = $value->url;
-			$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
-			$wpget = wp_remote_get( $url, array('headers' => $headers) );
-			$data = json_decode($wpget["body"]);
-			array_push($commit_stats, $data);
-		} */
 		 
 		foreach($commits as $key=>$value) {
 			$url = $value->url;
