@@ -4,6 +4,7 @@ TODO:
 1. Implement object orientation.
 2. Use transients to cache data, so I'm not resending the api requests every time the page is refreshed.
 3. Implement OAuth 2.0 Authentication.
+4. Use regexp to make the patch data look pretty.
 
 COMPLETED: 
 
