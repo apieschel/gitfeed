@@ -110,7 +110,6 @@ function gf_git_feed() {
 				}
 				// handle success
 				$data = json_decode($response->body);
-				// var_dump($data);
 				$commit_stats[strtotime($data->commit->author->date) - (60 * 60 * 5)] = $data;
 		}
 		
