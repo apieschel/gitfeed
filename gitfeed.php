@@ -59,6 +59,7 @@ function gf_git_feed() {
 		}
 		
 		$args = array();
+		$args2 = array();
 		$commits = array();
 		$commit_stats = array();
 		
@@ -78,22 +79,43 @@ function gf_git_feed() {
 				}
 				// handle success
 				$data = json_decode($response->body);
-				//var_dump($data);
 				$commits[strtotime($data[0]->commit->author->date) - (60 * 60 * 5)] = $data[0];
 		}
 		
 		krsort($commits);
 		$commits = array_values($commits);
 
-		// loop to grab latest commit stats and patch data for each commit
-		foreach($commits as $key=>$value) {
+		// loop to grab latest commit stats and patch data for each commit 
+		/* foreach($commits as $key=>$value) {
 			$sha = $value->sha;
 			$url = $value->url;
 			$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
 			$wpget = wp_remote_get( $url, array('headers' => $headers) );
 			$data = json_decode($wpget["body"]);
 			array_push($commit_stats, $data);
+		} */
+		 
+		foreach($commits as $key=>$value) {
+			$url = $value->url;
+			$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"));
+			array_push($args2, array('type' => 'GET', 'headers' => $headers, 'url' => $url));
 		}
+		
+		$responses2 = Requests::request_multiple($args2);
+		
+		foreach ($responses2 as $response) {
+				if (!is_a( $response, 'Requests_Response' )) {
+						echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
+						break;
+				}
+				// handle success
+				$data = json_decode($response->body);
+				// var_dump($data);
+				$commit_stats[strtotime($data->commit->author->date) - (60 * 60 * 5)] = $data;
+		}
+		
+		krsort($commit_stats);
+		$commit_stats = array_values($commit_stats);
 		
 		// display the data
 		echo '<div class="container-fluid">';
