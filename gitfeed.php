@@ -109,7 +109,9 @@ function gf_git_feed() {
 					echo '</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
 				
 					$response = $commits[$count];
-					echo '<p><em>Latest Commit</em>: ' . $response->commit->message . '</p>';
+					echo '<p><em>';
+					esc_html_e('Latest Commit', 'gitfeed');
+					echo '</em>: ' . $response->commit->message . '</p>';
 				
 					$response2 = $commit_stats[$count];
 					echo '<p><em>';
