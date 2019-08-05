@@ -16,13 +16,6 @@ Text Domain: gitfeed
 
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
-load_plugin_textdomain('gitfeed', false, basename( dirname( __FILE__ ) ) . '/languages' );
-
-if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'env.php' ) ) {
-	include_once 'env.php';
-	add_action('init', gf_set_up_env);
-}
-
 if ( ! class_exists( 'Gitfeed' ) ) {
 	/**
 	 * Class Gitfeed
@@ -45,6 +38,13 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 		 * Gitfeed constructor.
 		 */
 		public function __construct() {
+			
+			load_plugin_textdomain('gitfeed', false, basename( dirname( __FILE__ ) ) . '/languages' );
+
+			if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'env.php' ) ) {
+				include_once 'env.php';
+				add_action('init', gf_set_up_env);
+			}
 			
 			add_shortcode( 'gitfeed', 'gf_git_feed' );
 
