@@ -6,92 +6,24 @@
 class Github_API {
 	
 	public function __construct() {
-		
 		$this->init();
-		
-		// Set up admin options page
-		// https://www.smashingmagazine.com/2016/03/making-a-wordpress-plugin-that-uses-service-apis/
-		add_action( "admin_menu", "gf_plugin_menu_func" );
-		function gf_plugin_menu_func() {
-			 add_submenu_page( "options-general.php",  // Which menu parent
-					"Gitfeed",            // Page title
-					"Gitfeed",            // Menu title
-					"manage_options",       // Minimum capability (manage_options is an easy way to target administrators)
-					"gitfeed",            // Menu slug
-					"gf_plugin_options"     // Callback that prints the markup
-			 );
-		}
-
-		// Print the markup for the page
-		function gf_plugin_options() {
-			if ( !current_user_can( "manage_options" ) )  {
-				 wp_die( __( "You do not have sufficient permissions to access this page." ) );
-			}
-
-			if ( isset($_GET['status']) AND $_GET['status']=='success') { ?>
-			 <div id="message" class="updated notice is-dismissible">
-					<p><?php esc_html_e("Settings updated!", "gitfeed"); ?></p>
-					<button type="button" class="notice-dismiss">
-						 <span class="screen-reader-text"><?php esc_html_e("Dismiss this notice.", "gitfeed"); ?></span>
-					</button>
-			 </div>
-			<?php } ?>	 
-
-			<form method="post" action="<?php echo esc_url(admin_url( 'admin-post.php')); ?>">
-				<input type="hidden" name="action" value="update_github_settings" />
-
-				<h3><?php esc_html_e("GitHub Account Information", "gitfeed"); ?></h3>
-				<p>
-					<label><?php esc_html_e("GitHub User: ", "gitfeed"); ?></label>
-					<input class="" type="text" name="gf_user" value="<?php echo esc_attr(get_option('gf_user')); ?>" />
-				</p>
-
-				<p>
-					<label><?php esc_html_e("GitHub Password: ", "gitfeed"); ?></label>
-					<input class="" type="password" name="gf_pass" value="<?php echo esc_attr(get_option('gf_pass')); ?>" />
-				</p>
-
-				<input class="button button-primary" type="submit" value="<?php esc_html_e("Save", "gitfeed"); ?>" />
-			</form> 
-		<?php }
-
-		add_action( 'admin_post_update_github_settings', 'gf_handle_save' );
-
-		function gf_handle_save() {
-			 // Get the options that were sent
-			 $user = (!empty($_POST["gf_user"])) ? $_POST["gf_user"] : NULL;
-			 $pass = (!empty($_POST["gf_pass"])) ? $_POST["gf_pass"] : NULL;
-
-			 // Validation
-
-			 // Update the values
-			 update_option( "gf_user", $user, TRUE );
-			 update_option("gf_pass", $pass, TRUE);
-
-			 // Redirect back to settings page
-			 // The ?page=github corresponds to the "slug" 
-			 // set in the fourth parameter of add_submenu_page() above.
-			 $redirect_url = get_bloginfo("url") . "/wp-admin/options-general.php?page=gitfeed&status=success";
-			 header("Location: ".$redirect_url);
-			 exit;
-		}	
-	}
-
-	/**
-	 * Includes.
-	 */
-	private function includes() {
-	
 	}
 
 	/**
 	 * Initialize the Github API shortcode.
 	 */
 	private function init() {
-		add_shortcode( 'gitfeed', $this->gf_git_feed());
+		add_shortcode( 'gitfeed', array( $this, 'gf_git_feed' ) );	
+		
+		add_action( 'admin_menu', array( $this, 'gf_plugin_menu_func' ) );
+		
+		add_action( 'admin_post_update_github_settings', array( $this, 'gf_handle_save' ) );
 	}
 	
-	private function gf_git_feed() {
+	/**
+	 * Handle the API requests.
+	 */
+	public function gf_git_feed() {
 		$user = get_option('gf_user');
 		$password = get_option('gf_pass');
 		$url = 'https://api.github.com/users/' . $user . '/repos';
@@ -102,6 +34,7 @@ class Github_API {
 
 		if(gettype($data) == 'object' OR !$password OR !$user) {
 			echo '<div class="container">Uh oh, it looks like either your credentials need to be entered, or you have exceeded the API call limit.</div>';
+			var_dump($this);
 		} else {
 			// loop through the data, and create a new array with timestamps as keys
 			for($i = 0; $i < count($data); $i++) {
@@ -208,4 +141,72 @@ class Github_API {
 			echo '</div>';
 		}
 	}
+	
+	/** 
+	 * Set up admin options page
+	 * https://www.smashingmagazine.com/2016/03/making-a-wordpress-plugin-that-uses-service-apis/
+	 */
+	public function gf_plugin_menu_func() {
+		 add_submenu_page( "options-general.php",  // Which menu parent
+				"Gitfeed",            // Page title
+				"Gitfeed",            // Menu title
+				"manage_options",       // Minimum capability (manage_options is an easy way to target administrators)
+				"gitfeed",            // Menu slug
+				array($this, "gf_plugin_options")     // Callback that prints the markup
+		 );
+	}
+
+	/** 
+	 * Print the markup for the admin options page
+	 */
+	public function gf_plugin_options() {
+		if ( !current_user_can( "manage_options" ) )  {
+			 wp_die( __( "You do not have sufficient permissions to access this page." ) );
+		}
+
+		if ( isset($_GET['status']) AND $_GET['status']=='success') { ?>
+		 <div id="message" class="updated notice is-dismissible">
+				<p><?php esc_html_e("Settings updated!", "gitfeed"); ?></p>
+				<button type="button" class="notice-dismiss">
+					 <span class="screen-reader-text"><?php esc_html_e("Dismiss this notice.", "gitfeed"); ?></span>
+				</button>
+		 </div>
+		<?php } ?>	 
+
+		<form method="post" action="<?php echo esc_url(admin_url( 'admin-post.php')); ?>">
+			<input type="hidden" name="action" value="update_github_settings" />
+
+			<h3><?php esc_html_e("GitHub Account Information", "gitfeed"); ?></h3>
+			<p>
+				<label><?php esc_html_e("GitHub User: ", "gitfeed"); ?></label>
+				<input class="" type="text" name="gf_user" value="<?php echo esc_attr(get_option('gf_user')); ?>" />
+			</p>
+
+			<p>
+				<label><?php esc_html_e("GitHub Password: ", "gitfeed"); ?></label>
+				<input class="" type="password" name="gf_pass" value="<?php echo esc_attr(get_option('gf_pass')); ?>" />
+			</p>
+
+			<input class="button button-primary" type="submit" value="<?php esc_html_e("Save", "gitfeed"); ?>" />
+		</form> 
+	<?php }
+	
+	public function gf_handle_save() {
+		 // Get the options that were sent
+		 $user = (!empty($_POST["gf_user"])) ? $_POST["gf_user"] : NULL;
+		 $pass = (!empty($_POST["gf_pass"])) ? $_POST["gf_pass"] : NULL;
+
+		 // Validation
+
+		 // Update the values
+		 update_option( "gf_user", $user, TRUE );
+		 update_option("gf_pass", $pass, TRUE);
+
+		 // Redirect back to settings page
+		 // The ?page=github corresponds to the "slug" 
+		 // set in the fourth parameter of add_submenu_page() above.
+		 $redirect_url = get_bloginfo("url") . "/wp-admin/options-general.php?page=gitfeed&status=success";
+		 header("Location: ".$redirect_url);
+		 exit;
+	}	
 }
