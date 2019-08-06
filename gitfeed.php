@@ -39,6 +39,10 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 		 */
 		public function __construct() {
 			
+			$this->includes();
+			
+			$this->init();
+			
 			load_plugin_textdomain('gitfeed', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
 			if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'env.php' ) ) {
@@ -232,6 +236,20 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 				 header("Location: ".$redirect_url);
 				 exit;
 			}		
+		}
+		
+		/**
+		 * Initialize the plugin.
+		 */
+		private function init() {
+			return null;
+		}
+
+		/**
+		 * Load needed files for the plugin
+		 */
+		private function includes() {
+			return null;
 		}		
 	}
 }
