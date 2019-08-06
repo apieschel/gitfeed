@@ -8,4 +8,5 @@ TODO:
 COMPLETED: 
 
 ~~Rewrite remaining asynchronous requests code to use the WordPress Requests class.~~
+
 ~~Implement object orientation.~~
