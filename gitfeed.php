@@ -43,12 +43,7 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 			
 			$this->init();
 			
-			load_plugin_textdomain('gitfeed', false, basename( dirname( __FILE__ ) ) . '/languages' );
-
-			if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'env.php' ) ) {
-				include_once 'env.php';
-				add_action('init', gf_set_up_env);
-			}
+			$this->load_textdomain();
 			
 			add_shortcode( 'gitfeed', 'gf_git_feed' );
 
@@ -244,12 +239,22 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 		private function init() {
 			return null;
 		}
+		
+		/**
+		 * Load translations
+		 */
+		private function load_textdomain() {		
+			load_plugin_textdomain('gitfeed', false, basename( dirname( __FILE__ ) ) . '/languages' );
+		}
 
 		/**
 		 * Load needed files for the plugin
 		 */
 		private function includes() {
-			return null;
+			if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'env.php' ) ) {
+				include_once 'env.php';
+				add_action('init', gf_set_up_env);
+			}
 		}		
 	}
 }
