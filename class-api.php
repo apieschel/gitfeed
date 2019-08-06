@@ -106,14 +106,14 @@ class Github_API {
 
 			// display the data
 			echo '<div class="container-fluid">';
-				echo '<h2 style="font-size:1.4rem; font-weight:normal; text-align:center; margin-bottom:20px;">This custom WordPress plugin displays a feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
-				echo '<p style="text-align:center; margin-bottom:40px;"><a target="_blank" style="color:#0000EE;" href="https://github.com/' . $user . '">Link to ' . $user . '&apos;s Github Page</a></p>';
+				echo '<h2 class="gf-header">This custom WordPress plugin displays a feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
+				echo '<p class="gf-subhead"><a target="_blank" class="gf-link" href="https://github.com/' . $user . '">Link to ' . $user . '&apos;s Github Page</a></p>';
 
 				$count = 0;
 				foreach($repos as $key=>$value) {	
-					echo '<div class="repo">';
-						echo '<h3 style="text-align:center; font-size:1.3rem; margin-bottom:20px;"><strong>' . $value[0] . '</strong>: ' . $value[1] . '</h3>';
-						echo '<p><span style="color:green;"><em>';
+					echo '<div class="gf-repo">';
+						echo '<h3 class="gf-repohead"><strong>' . $value[0] . '</strong>: ' . $value[1] . '</h3>';
+						echo '<p><span class="gf-green"><em>';
 						esc_html_e('Last updated', 'gitfeed');
 						echo '</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
 
