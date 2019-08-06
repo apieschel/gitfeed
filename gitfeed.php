@@ -70,7 +70,6 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 						// subtract five hours to adjust to U.S. Central time
 						$repos[strtotime($data[$i]->updated_at) - (60 * 60 * 5)] = $array;
 					}
-					curl_close($ch);
 
 					// sort the array in reverse order according to the timestamps
 					krsort($repos);
@@ -96,13 +95,13 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 					$responses = Requests::request_multiple($args);
 
 					foreach ($responses as $response) {
-							if (!is_a( $response, 'Requests_Response' )) {
-									echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
-									break;
-							}
-							// handle success
-							$data = json_decode($response->body);
-							$commits[strtotime($data[0]->commit->author->date) - (60 * 60 * 5)] = $data[0];
+						if (!is_a( $response, 'Requests_Response' )) {
+							echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
+							break;
+						}
+						// handle success
+						$data = json_decode($response->body);
+						$commits[strtotime($data[0]->commit->author->date) - (60 * 60 * 5)] = $data[0];
 					}
 
 					krsort($commits);
@@ -117,13 +116,13 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 					$responses2 = Requests::request_multiple($args2);
 
 					foreach ($responses2 as $response) {
-							if (!is_a( $response, 'Requests_Response' )) {
-									echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
-									break;
-							}
-							// handle success
-							$data = json_decode($response->body);
-							$commit_stats[strtotime($data->commit->author->date) - (60 * 60 * 5)] = $data;
+						if (!is_a( $response, 'Requests_Response' )) {
+							echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
+							break;
+						}
+						// handle success
+						$data = json_decode($response->body);
+						$commit_stats[strtotime($data->commit->author->date) - (60 * 60 * 5)] = $data;
 					}
 
 					krsort($commit_stats);
@@ -172,12 +171,12 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 			add_action( "admin_menu", "gf_plugin_menu_func" );
 			function gf_plugin_menu_func() {
 				 add_submenu_page( "options-general.php",  // Which menu parent
-												"Gitfeed",            // Page title
-												"Gitfeed",            // Menu title
-												"manage_options",       // Minimum capability (manage_options is an easy way to target administrators)
-												"gitfeed",            // Menu slug
-												"gf_plugin_options"     // Callback that prints the markup
-										 );
+						"Gitfeed",            // Page title
+						"Gitfeed",            // Menu title
+						"manage_options",       // Minimum capability (manage_options is an easy way to target administrators)
+						"gitfeed",            // Menu slug
+						"gf_plugin_options"     // Callback that prints the markup
+				 );
 			}
 
 			// Print the markup for the page
