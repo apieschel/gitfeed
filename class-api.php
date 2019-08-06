@@ -111,7 +111,7 @@ class Github_API {
 
 				$count = 0;
 				foreach($repos as $key=>$value) {	
-					echo '<div style="background:#edffed; border:1px solid lightgrey; margin:0 auto; margin-bottom:20px; padding:40px; width:75%;">';
+					echo '<div class="repo">';
 						echo '<h3 style="text-align:center; font-size:1.3rem; margin-bottom:20px;"><strong>' . $value[0] . '</strong>: ' . $value[1] . '</h3>';
 						echo '<p><span style="color:green;"><em>';
 						esc_html_e('Last updated', 'gitfeed');

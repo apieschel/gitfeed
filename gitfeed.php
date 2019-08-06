@@ -42,7 +42,9 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 			
 			$this->init();
 			
-			$this->load_textdomain();	
+			$this->load_textdomain();
+			
+			$this->enqueue_globals();
 		}
 		
 		/**
@@ -73,6 +75,10 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 				include_once 'class-api.php';
 			}
 		}		
+		
+		private function enqueue_globals() {
+			wp_enqueue_style('gitfeed', plugin_dir_url( __FILE__ ) . 'assets/css/gitfeed-global.css'); 
+		}
 	}
 }
 
