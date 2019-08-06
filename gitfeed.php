@@ -50,7 +50,7 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 		 */
 		private function init() {
 			// Initialize the plugin core.
-			$this->api = new Gitfeed_API();
+			$this->api = new Github_API();
 		}
 		
 		/**
