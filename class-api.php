@@ -104,11 +104,14 @@ class Github_API {
 			krsort($commit_stats);
 			$commit_stats = array_values($commit_stats);
 
-			// display the data
-			echo '<div class="container-fluid">';
-				echo '<h2 class="gf-header">This custom WordPress plugin displays a feed of ' . $user . '&apos;s Git repos, sorted from the most recently updated.</h2>';
-				echo '<p class="gf-subhead"><a target="_blank" class="gf-link" href="https://github.com/' . $user . '">Link to ' . $user . '&apos;s Github Page</a></p>';
+			// display the data ?>
+			<div class="container-fluid">
+				<h2 class="gf-header">This custom WordPress plugin displays a feed of <?php echo $user ?>&apos;s Git repos, sorted from the most recently updated.</h2>
+				<p class="gf-subhead">
+					<a target="_blank" class="gf-link" href="https://github.com/<?php echo $user; ?>">Link to <?php echo $user ?>&apos;s Github Page</a>
+				</p>
 
+				<?php 
 				$count = 0;
 				foreach($repos as $key=>$value) {	
 					echo '<div class="gf-repo">';
