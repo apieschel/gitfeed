@@ -13,10 +13,8 @@ class Github_API {
 	 * Initialize the Github API shortcode.
 	 */
 	private function init() {
-		add_shortcode( 'gitfeed', array( $this, 'gf_git_feed' ) );	
-		
-		add_action( 'admin_menu', array( $this, 'gf_plugin_menu_func' ) );
-		
+		add_shortcode( 'gitfeed', array( $this, 'gf_git_feed' ) );		
+		add_action( 'admin_menu', array( $this, 'gf_plugin_menu_func' ) );	
 		add_action( 'admin_post_update_github_settings', array( $this, 'gf_handle_save' ) );
 	}
 	
@@ -32,12 +30,12 @@ class Github_API {
 		$data = json_decode($wpget["body"]);
 		$repos = array();
 
-		if(gettype($data) == 'object' OR !$password OR !$user) {
-			echo '<div class="container">Uh oh, it looks like either your credentials need to be entered, or you have exceeded the API call limit.</div>';
-			var_dump($this);
-		} else {
+		if(gettype($data) == 'object' OR !$password OR !$user): ?>
+			<div class="container">Uh oh, it looks like either your credentials need to be entered, or you have exceeded the API call limit.</div>
+		<?php else:
+		
 			// loop through the data, and create a new array with timestamps as keys
-			for($i = 0; $i < count($data); $i++) {
+			for($i = 0; $i < count($data); $i++):
 				$array = array();
 				$current = $data[$i];
 				array_push($array, $current->name);
@@ -45,16 +43,16 @@ class Github_API {
 				array_push($array, $current->language);
 				// subtract five hours to adjust to U.S. Central time
 				$repos[strtotime($data[$i]->updated_at) - (60 * 60 * 5)] = $array;
-			}
+			endfor;
 
 			// sort the array in reverse order according to the timestamps
 			krsort($repos);
 
 			// if there are more than 10 repos, then only keep the 10 most recently updated
 			// maintain the existing keys for the timestamps
-			if(count($repos) > 9) {
+			if(count($repos) > 9):
 				$repos = array_slice($repos, 0, 10, TRUE);
-			}
+			endif;
 
 			$args = array();
 			$args2 = array();
@@ -62,60 +60,66 @@ class Github_API {
 			$commit_stats = array();
 
 			// use built-in Wordpress Requests class to send multiple aynchronous requests
-			foreach($repos as $key=>$value) {
+			foreach($repos as $key=>$value):
 				$url = 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits';
 				$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"));
 				array_push($args, array('type' => 'GET', 'headers' => $headers, 'url' => $url));
-			}
+			endforeach;
 
 			$responses = Requests::request_multiple($args);
 
-			foreach ($responses as $response) {
-				if (!is_a( $response, 'Requests_Response' )) {
+			foreach ($responses as $response):
+				if (!is_a( $response, 'Requests_Response' )):
 					echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
 					break;
-				}
+				endif;
 				// handle success
 				$data = json_decode($response->body);
 				$commits[strtotime($data[0]->commit->author->date) - (60 * 60 * 5)] = $data[0];
-			}
+			endforeach;
 
 			krsort($commits);
 			$commits = array_values($commits);
 
-			foreach($commits as $key=>$value) {
+			foreach($commits as $key=>$value):
 				$url = $value->url;
 				$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"));
 				array_push($args2, array('type' => 'GET', 'headers' => $headers, 'url' => $url));
-			}
+			endforeach;
 
 			$responses2 = Requests::request_multiple($args2);
 
-			foreach ($responses2 as $response) {
-				if (!is_a( $response, 'Requests_Response' )) {
+			foreach ($responses2 as $response):
+				if (!is_a( $response, 'Requests_Response' )):
 					echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
 					break;
-				}
+				endif;
 				// handle success
 				$data = json_decode($response->body);
 				$commit_stats[strtotime($data->commit->author->date) - (60 * 60 * 5)] = $data;
-			}
+			endforeach;
 
 			krsort($commit_stats);
 			$commit_stats = array_values($commit_stats);
 
 			// display the data ?>
 			<div class="container-fluid">
-				<h2 class="gf-header">This custom WordPress plugin displays a feed of <?php echo $user ?>&apos;s Git repos, sorted from the most recently updated.</h2>
+				<h2 class="gf-header">
+					This custom WordPress plugin displays a feed of <?php echo $user ?>&apos;s Git repos, sorted from the most recently updated.
+				</h2>
 				<p class="gf-subhead">
-					<a target="_blank" class="gf-link" href="https://github.com/<?php echo $user; ?>">Link to <?php echo $user ?>&apos;s Github Page</a>
+					<a target="_blank" class="gf-link" href="https://github.com/<?php echo $user; ?>">
+						Link to <?php echo $user ?>&apos;s Github Page
+					</a>
 				</p>
 
 				<?php 
 				$count = 0;
 				foreach($repos as $key=>$value): ?>	
 					<div class="gf-repo">
-						<h3 class="gf-repohead"><strong><?php echo $value[0]; ?></strong>: <?php echo $value[1]; ?></h3>
+						<h3 class="gf-repohead">
+							<strong><?php echo $value[0]; ?></strong>: <?php echo $value[1]; ?>
+						</h3>
 						<p>
 							<span class="gf-green">
 								<em><?php esc_html_e('Last updated', 'gitfeed'); ?></em>: <?php echo date("F j, Y, g:i a", $key); ?> U.S. Central Time
@@ -123,29 +127,43 @@ class Github_API {
 						</p>
 						
 						<?php
-						$response = $commits[$count];
-						echo '<p><em>';
-						esc_html_e('Latest Commit', 'gitfeed');
-						echo '</em>: ' . $response->commit->message . '</p>';
-
-						$response2 = $commit_stats[$count];
-						echo '<p><em>';
-						esc_html_e('Total Code Changes: ', 'gitfeed');
-						echo '</em>: ' . $response2->stats->total . '</p>';	
-						echo '<p><em>';
-						esc_html_e('Lines Added: ', 'gitfeed');
-						echo '</em>: ' . $response2->stats->additions . '</p>';	
-						echo '<p><em>Lines Deleted</em>: ' . $response2->stats->deletions . '</p>';	
-
-						foreach($response2->files as $key=>$value) {
-								echo '<p><em>File Changed</em>: ' . $response2->files[$key]->filename . '</p>';
-								echo '<p><em>Patch</em>: ' . esc_html($response2->files[$key]->patch) . '</p>';
-						}
-					echo '</div>';
-					$count++;
-				endforeach;
-			echo '</div>';
-		}
+							$response = $commits[$count]; 
+							$response2 = $commit_stats[$count];
+						?>
+						
+						<p>
+							<em><?php esc_html_e('Latest Commit', 'gitfeed'); ?></em>: 
+							<?php echo $response->commit->message; ?>
+						</p>
+						<p>
+							<em><?php esc_html_e('Total Code Changes: ', 'gitfeed'); ?></em>: 
+							<?php echo $response2->stats->total; ?>
+						</p>	
+						<p>
+							<em><?php esc_html_e('Lines Added: ', 'gitfeed'); ?></em>: 
+							<?php echo $response2->stats->additions; ?>
+						</p>	
+						<p>
+							<em>Lines Deleted</em>: 
+							<?php echo $response2->stats->deletions; ?>
+						</p>	
+						
+						<?php foreach($response2->files as $key=>$value): ?>
+								<p>
+									<em>File Changed</em>: 
+									<?php echo $response2->files[$key]->filename; ?>
+								</p>
+								<p>
+									<em>Patch</em>: 
+									<?php echo esc_html($response2->files[$key]->patch); ?>
+								</p>
+						<?php endforeach; ?>
+					</div>
+					
+					<?php $count++;
+				endforeach; ?>
+			</div>
+		<?php endif;
 	}
 	
 	/** 
