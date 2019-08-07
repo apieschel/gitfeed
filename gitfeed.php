@@ -16,6 +16,10 @@ Text Domain: gitfeed
 
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
+if ( ! defined( 'GF_DIR_PATH' ) ) {
+	define( 'GF_DIR_PATH', trailingslashit( dirname( __FILE__ ) ) );
+}
+
 if ( ! class_exists( 'Gitfeed' ) ) {
 	/**
 	 * Class Gitfeed

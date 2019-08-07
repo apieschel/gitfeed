@@ -9,10 +9,9 @@
 
 ?>
 
-
 <div class="container-fluid">
 	<h2 class="gf-header">
-		This custom WordPress plugin displays a feed of <?php echo $user ?>&apos;s Git repos, sorted from the most recently updated.
+		<?php esc_html_e('This custom WordPress plugin displays a feed of Git repos, sorted from the most recently updated.', 'gitfeed'); ?>
 	</h2>
 	<p class="gf-subhead">
 		<a target="_blank" class="gf-link" href="https://github.com/<?php echo $user; ?>">

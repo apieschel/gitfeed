@@ -101,15 +101,47 @@ class Github_API {
 
 			krsort($commit_stats);
 			$commit_stats = array_values($commit_stats);
+			
+			$args = array(
+				'commits' => $commits,
+				'commit_stats' => $commit_stats,
+				'repos' => $repos,
+				'responses' => $responses,
+				'responses2' => $responses2
+			);
+				
+			$this->view('repo-page', $args);
 
-			// display the data 
-			$file = trailingslashit( dirname( __FILE__ ) ) . "views/repo-page.php";
-			ob_start();
-			include $file;
-			$content = ob_get_clean();
-			echo $content;
-		
 		endif;
+	}
+	
+	/**
+	 * Display a page or template's markup.
+	 *
+	 * @param string $name  View name = file name.
+	 * @param array  $args  Arguments.
+	 * @param bool   $echo  Echo or return.
+	 *
+	 * @return string
+	*/
+	public function view( $name, $args = array(), $echo = true ) {
+		$file = GF_DIR_PATH . "views/{$name}.php";
+		
+		if ( is_file( $file ) ):
+			ob_start();
+			
+			extract( $args );
+		
+			include $file;
+		
+			$content = ob_get_clean();
+		
+			if ( ! $echo ):
+				return $content;
+			endif;
+		
+			echo $content;
+		endif;	
 	}
 	
 	/** 
