@@ -113,13 +113,16 @@ class Github_API {
 
 				<?php 
 				$count = 0;
-				foreach($repos as $key=>$value) {	
-					echo '<div class="gf-repo">';
-						echo '<h3 class="gf-repohead"><strong>' . $value[0] . '</strong>: ' . $value[1] . '</h3>';
-						echo '<p><span class="gf-green"><em>';
-						esc_html_e('Last updated', 'gitfeed');
-						echo '</em>: ' . date("F j, Y, g:i a", $key) . ' U.S. Central Time</span></p>';
-
+				foreach($repos as $key=>$value): ?>	
+					<div class="gf-repo">
+						<h3 class="gf-repohead"><strong><?php echo $value[0]; ?></strong>: <?php echo $value[1]; ?></h3>
+						<p>
+							<span class="gf-green">
+								<em><?php esc_html_e('Last updated', 'gitfeed'); ?></em>: <?php echo date("F j, Y, g:i a", $key); ?> U.S. Central Time
+							</span>
+						</p>
+						
+						<?php
 						$response = $commits[$count];
 						echo '<p><em>';
 						esc_html_e('Latest Commit', 'gitfeed');
@@ -140,7 +143,7 @@ class Github_API {
 						}
 					echo '</div>';
 					$count++;
-				}
+				endforeach;
 			echo '</div>';
 		}
 	}
