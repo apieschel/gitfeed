@@ -5,6 +5,9 @@
  * @since 1.0
  * @package Gitfeed
  *
+ * @var arr $commits  		 array of commit data.
+ * @var arr $commit_stats  array of stats for latest commits.
+ * @var arr $repos  			 array of repositories.
  */
 
 ?>
