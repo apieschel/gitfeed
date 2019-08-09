@@ -22,42 +22,59 @@ class Github_API {
 	 * Handle the API requests.
 	 */
 	public function gf_git_feed() {
+		
 		$user = get_option('gf_user');
 		$password = get_option('gf_pass');
-		$url = 'https://api.github.com/users/' . $user . '/repos';
-		$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
-		$wpget = wp_remote_get( $url, array('headers' => $headers) );
-		$data = json_decode($wpget["body"]);
 		$repos = array();
+		$commits = array();
+		$commit_stats = array();
+		$expiration = 60*60*24;
 
-		if(gettype($data) == 'object' OR !$password OR !$user): ?>
-			<div class="container">Uh oh, it looks like either your credentials need to be entered, or you have exceeded the API call limit.</div>
+		if(!$password OR !$user): ?>
+			<div class="container">Uh oh, it looks like either your credentials need to be entered.</div>
 		<?php else:
 			
-			// loop through the data, and create a new array with timestamps as keys
-			for($i = 0; $i < count($data); $i++):
-				$array = array();
-				$current = $data[$i];
-				array_push($array, $current->name);
-				array_push($array, $current->description);
-				array_push($array, $current->language);
-				// subtract five hours to adjust to U.S. Central time
-				$repos[strtotime($data[$i]->updated_at) - (60 * 60 * 5)] = $array;
-			endfor;
+			/* https://codex.wordpress.org/Transients_API
+			** check if the transient for the repos value has expired,
+			** and if it has then set it again
+			*/
+			if( !get_transient( 'repos' ) ) {
+				
+				$url = 'https://api.github.com/users/' . $user . '/repos';
+				$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
+				$wpget = wp_remote_get( $url, array('headers' => $headers) );
+				$data = json_decode($wpget["body"]);
+				
+				// loop through the data, and create a new array with timestamps as keys
+				for($i = 0; $i < count($data); $i++) {
+					$array = array();
+					$current = $data[$i];
+					array_push($array, $current->name);
+					array_push($array, $current->description);
+					array_push($array, $current->language);
+					// subtract five hours to adjust to U.S. Central time
+					$repos[strtotime($data[$i]->updated_at) - (60 * 60 * 5)] = $array;
+				}
 
-			// sort the array in reverse order according to the timestamps
-			krsort($repos);
+				// sort the array in reverse order according to the timestamps
+				krsort($repos);
 
-			// if there are more than 10 repos, then only keep the 10 most recently updated
-			// maintain the existing keys for the timestamps
-			if(count($repos) > 9):
-				$repos = array_slice($repos, 0, 10, TRUE);
-			endif;
+				// if there are more than 10 repos, then only keep the 10 most recently updated
+				// maintain the existing keys for the timestamps
+				if(count($repos) > 9) {
+					$repos = array_slice($repos, 0, 10, TRUE);
+				}
 
+				set_transient( 'repos', $repos, $expiration );
+				
+			// else we don't need to redo the api call,
+			// and we can use the transient
+			} else {
+				$repos = get_transient( 'repos' );
+			}
+		
 			$args = array();
 			$args2 = array();
-			$commits = array();
-			$commit_stats = array();
 
 			// use built-in Wordpress Requests class to send multiple aynchronous requests
 			foreach($repos as $key=>$value):
