@@ -27,104 +27,125 @@ class Github_API {
 		$commits = array();
 		$commit_stats = array();
 		
-		// Set the Github data to expire in two hours.
-		// Without user authentication, the API call limit is 60 per hour.
-		$expiration = 60 * 60 * 2;
+		if( !$user ) { ?>
+			
+			<div class="container gf-subhead">
+				<?php esc_html_e('It looks like you still need to ', 'gitfeed'); ?> 
+				<a class="gf-link" href="<?php echo esc_url( get_bloginfo('url') . '/wp-admin/options-general.php?page=gitfeed'); ?>">
+					<?php esc_html_e('enter your Github username.', 'gitfeed'); ?>
+				</a> 
+			</div><!--.container-->
+			
+		<?php } else {
+			
+			// Set the Github data to expire in two hours.
+			// Without user authentication, the API call limit is 60 per hour.
+			$expiration = 60 * 60 * 2;
 
-		/* https://codex.wordpress.org/Transients_API
-		 * Check if the transient for the $repos value has expired,
-		 * and if it has then set it again
-		 */
-		if( !get_transient( 'repos' ) OR !get_transient( 'commits' ) OR !get_transient( 'commit_stats' ) ) {		
-			$url = 'https://api.github.com/users/' . $user . '/repos';
-			$wpget = wp_remote_get($url);
-			$data = json_decode($wpget["body"]);
+			/* https://codex.wordpress.org/Transients_API
+			 * Check if the transient for the $repos value has expired,
+			 * and if it has then set it again
+			 */
+			if( !get_transient( 'repos' ) OR !get_transient( 'commits' ) OR !get_transient( 'commit_stats' ) ) {		
+				$url = 'https://api.github.com/users/' . $user . '/repos';
+				$wpget = wp_remote_get($url);
+				$data = json_decode($wpget["body"]);
+				
+				if( count($data) == 1 ) { ?>
+				
+					<div class="container gf-subhead">
+						<?php esc_html_e('Uh oh, it looks like you have exceeded the API call limit. Please try again in an hour.', 'gitfeed'); ?> 
+					</div><!--.container-->
+					
+				<?php } else {
+					
+					// loop through the data, and create a new array with timestamps as keys
+					for($i = 0; $i < count($data); $i++) {
+						$array = array();
+						$current = $data[$i];
+						array_push($array, $current->name);
+						array_push($array, $current->description);
+						array_push($array, $current->language);
+						// subtract five hours to adjust to U.S. Central time
+						$repos[strtotime($data[$i]->updated_at) - (60 * 60 * 5)] = $array;
+					}
 
-			// loop through the data, and create a new array with timestamps as keys
-			for($i = 0; $i < count($data); $i++) {
-				$array = array();
-				$current = $data[$i];
-				array_push($array, $current->name);
-				array_push($array, $current->description);
-				array_push($array, $current->language);
-				// subtract five hours to adjust to U.S. Central time
-				$repos[strtotime($data[$i]->updated_at) - (60 * 60 * 5)] = $array;
-			}
+					// sort the array in reverse order according to the timestamps
+					krsort($repos);
 
-			// sort the array in reverse order according to the timestamps
-			krsort($repos);
+					// if there are more than 10 repos, then only keep the 10 most recently updated
+					// maintain the existing keys for the timestamps
+					if(count($repos) > 9) {
+						$repos = array_slice($repos, 0, 10, TRUE);
+					}
 
-			// if there are more than 10 repos, then only keep the 10 most recently updated
-			// maintain the existing keys for the timestamps
-			if(count($repos) > 9) {
-				$repos = array_slice($repos, 0, 10, TRUE);
-			}
+					set_transient( 'repos', $repos, $expiration );
 
-			set_transient( 'repos', $repos, $expiration );
+					$args = array();
+					$args2 = array();
 
-			$args = array();
-			$args2 = array();
+					// use built-in Wordpress Requests class to send multiple aynchronous requests
+					foreach($repos as $key=>$value) {
+						$url = 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits';
+						array_push($args, array('type' => 'GET', 'url' => $url));
+					}
 
-			// use built-in Wordpress Requests class to send multiple aynchronous requests
-			foreach($repos as $key=>$value) {
-				$url = 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits';
-				array_push($args, array('type' => 'GET', 'url' => $url));
-			}
+					$responses = Requests::request_multiple($args);
 
-			$responses = Requests::request_multiple($args);
+					foreach ($responses as $response) {
+						if (!is_a( $response, 'Requests_Response' )) {
+							echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
+							break;
+						}
+						// handle success
+						$data = json_decode($response->body);
+						$commits[strtotime($data[0]->commit->author->date) - (60 * 60 * 5)] = $data[0];
+					}
 
-			foreach ($responses as $response) {
-				if (!is_a( $response, 'Requests_Response' )) {
-					echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
-					break;
+					krsort($commits);
+					$commits = array_values($commits);
+
+					foreach($commits as $key=>$value) {
+						$url = $value->url;
+						array_push($args2, array('type' => 'GET', 'url' => $url));
+					}
+
+					$responses2 = Requests::request_multiple($args2);
+
+					foreach ($responses2 as $response) {
+						if (!is_a( $response, 'Requests_Response' )) {
+							echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
+							break;
+						}
+						// handle success
+						$data = json_decode($response->body);
+						$commit_stats[strtotime($data->commit->author->date) - (60 * 60 * 5)] = $data;
+					}
+
+					krsort($commit_stats);
+					$commit_stats = array_values($commit_stats);
+
+					set_transient( 'commits', $commits, $expiration );
+					set_transient( 'commit_stats', $commit_stats, $expiration );
+					set_transient( 'repos', $repos, $expiration );
 				}
-				// handle success
-				$data = json_decode($response->body);
-				$commits[strtotime($data[0]->commit->author->date) - (60 * 60 * 5)] = $data[0];
+				
+			// Else, we don't need to redo the api call,
+			// and we can use the transients.
+			} else {
+				$commits = get_transient( 'commits' );
+				$commit_stats = get_transient( 'commit_stats' );
+				$repos = get_transient( 'repos' );
 			}
 
-			krsort($commits);
-			$commits = array_values($commits);
+			$args = array(
+				'commits' => $commits,
+				'commit_stats' => $commit_stats,
+				'repos' => $repos
+			);
 
-			foreach($commits as $key=>$value) {
-				$url = $value->url;
-				array_push($args2, array('type' => 'GET', 'url' => $url));
-			}
-
-			$responses2 = Requests::request_multiple($args2);
-
-			foreach ($responses2 as $response) {
-				if (!is_a( $response, 'Requests_Response' )) {
-					echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
-					break;
-				}
-				// handle success
-				$data = json_decode($response->body);
-				$commit_stats[strtotime($data->commit->author->date) - (60 * 60 * 5)] = $data;
-			}
-
-			krsort($commit_stats);
-			$commit_stats = array_values($commit_stats);
-
-			set_transient( 'commits', $commits, $expiration );
-			set_transient( 'commit_stats', $commit_stats, $expiration );
-			set_transient( 'repos', $repos, $expiration );
-
-		// Else, we don't need to redo the api call,
-		// and we can use the transients.
-		} else {
-			$commits = get_transient( 'commits' );
-			$commit_stats = get_transient( 'commit_stats' );
-			$repos = get_transient( 'repos' );
+			$this->view('repo-page', $args);
 		}
-
-		$args = array(
-			'commits' => $commits,
-			'commit_stats' => $commit_stats,
-			'repos' => $repos
-		);
-
-		$this->view('repo-page', $args);
 	}
 	
 	/**
