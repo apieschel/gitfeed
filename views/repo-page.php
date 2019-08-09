@@ -18,7 +18,7 @@
 	</h2>
 	<p class="gf-subhead">
 		<a target="_blank" class="gf-link" href="https://github.com/<?php echo $user; ?>">
-			Link to <?php echo $user ?>&apos;s Github Page
+			<?php esc_html_e('Link to Github Page', 'gitfeed'); ?>
 		</a>
 	</p>
 

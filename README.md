@@ -10,4 +10,3 @@ COMPLETED:
 ~~Implement object orientation.~~
 
 ~~Use transients to cache data, so I'm not resending the api requests every time the page is refreshed.~~
-
