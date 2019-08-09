@@ -12,7 +12,7 @@
 
 ?>
 
-<div class="container-fluid">
+<div>
 	<h2 class="gf-header">
 		<?php esc_html_e('This custom WordPress plugin displays a feed of Git repos, sorted from the most recently updated.', 'gitfeed'); ?>
 	</h2>

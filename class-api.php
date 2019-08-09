@@ -29,7 +29,7 @@ class Github_API {
 		
 		if( !$user ) { ?>
 			
-			<div class="container gf-subhead">
+			<div class="gf-subhead">
 				<?php esc_html_e('It looks like you still need to ', 'gitfeed'); ?> 
 				<a class="gf-link" href="<?php echo esc_url( get_bloginfo('url') . '/wp-admin/options-general.php?page=gitfeed'); ?>">
 					<?php esc_html_e('enter your Github username.', 'gitfeed'); ?>
@@ -53,7 +53,7 @@ class Github_API {
 				
 				if( count($data) == 1 ) { ?>
 				
-					<div class="container gf-subhead">
+					<div class="gf-subhead">
 						<?php esc_html_e('Uh oh, it looks like you have exceeded the API call limit. Please try again in an hour.', 'gitfeed'); ?> 
 					</div><!--.container-->
 					
