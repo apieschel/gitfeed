@@ -23,7 +23,6 @@ class Github_API {
 	 */
 	public function gf_git_feed() {	
 		$user = get_option('gf_user');
-		$password = get_option('gf_pass');
 		$repos = array();
 		$commits = array();
 		$commit_stats = array();
@@ -192,16 +191,12 @@ class Github_API {
 			<input type="hidden" name="action" value="update_github_settings" />
 
 			<h3><?php esc_html_e("GitHub Account Information", "gitfeed"); ?></h3>
+			
 			<p>
 				<label><?php esc_html_e("GitHub User: ", "gitfeed"); ?></label>
 				<input class="" type="text" name="gf_user" value="<?php echo esc_attr(get_option('gf_user')); ?>" />
 			</p>
-
-			<p>
-				<label><?php esc_html_e("GitHub Password: ", "gitfeed"); ?></label>
-				<input class="" type="password" name="gf_pass" value="<?php echo esc_attr(get_option('gf_pass')); ?>" />
-			</p>
-
+		
 			<input class="button button-primary" type="submit" value="<?php esc_html_e("Save", "gitfeed"); ?>" />
 		</form> 
 	<?php }
@@ -209,13 +204,11 @@ class Github_API {
 	public function gf_handle_save() {
 		 // Get the options that were sent
 		 $user = (!empty($_POST["gf_user"])) ? $_POST["gf_user"] : NULL;
-		 $pass = (!empty($_POST["gf_pass"])) ? $_POST["gf_pass"] : NULL;
 
 		 // Validation
 
 		 // Update the values
 		 update_option( "gf_user", $user, TRUE );
-		 update_option("gf_pass", $pass, TRUE);
 
 		 // Redirect back to settings page
 		 // The ?page=github corresponds to the "slug" 
