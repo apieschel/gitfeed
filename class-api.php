@@ -21,8 +21,7 @@ class Github_API {
 	/**
 	 * Handle the API requests.
 	 */
-	public function gf_git_feed() {
-		
+	public function gf_git_feed() {	
 		$user = get_option('gf_user');
 		$password = get_option('gf_pass');
 		$repos = array();
@@ -30,16 +29,14 @@ class Github_API {
 		$commit_stats = array();
 		$expiration = 60*60*24;
 
-		if(!$password OR !$user): ?>
+		if(!$password OR !$user) { ?>
 			<div class="container">Uh oh, it looks like either your credentials need to be entered.</div>
-		<?php else:
-			
+		<?php } else {
 			/* https://codex.wordpress.org/Transients_API
-			** check if the transient for the repos value has expired,
-			** and if it has then set it again
-			*/
-			if(!get_transient( 'repos' ) OR !get_transient( 'commits' ) OR !get_transient( 'commit_stats' )) {
-				
+			 * check if the transient for the repos value has expired,
+			 * and if it has then set it again
+			 */
+			if( !get_transient( 'repos' ) OR !get_transient( 'commits' ) OR !get_transient( 'commit_stats' ) ) {		
 				$url = 'https://api.github.com/users/' . $user . '/repos';
 				$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"), 'User-Agent' => $user);
 				$wpget = wp_remote_get( $url, array('headers' => $headers) );
@@ -71,44 +68,44 @@ class Github_API {
 				$args2 = array();
 
 				// use built-in Wordpress Requests class to send multiple aynchronous requests
-				foreach($repos as $key=>$value):
+				foreach($repos as $key=>$value) {
 					$url = 'https://api.github.com/repos/' . $user . '/' . $value[0] . '/commits';
 					$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"));
 					array_push($args, array('type' => 'GET', 'headers' => $headers, 'url' => $url));
-				endforeach;
+				}
 
 				$responses = Requests::request_multiple($args);
 
-				foreach ($responses as $response):
-					if (!is_a( $response, 'Requests_Response' )):
+				foreach ($responses as $response) {
+					if (!is_a( $response, 'Requests_Response' )) {
 						echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
 						break;
-					endif;
+					}
 					// handle success
 					$data = json_decode($response->body);
 					$commits[strtotime($data[0]->commit->author->date) - (60 * 60 * 5)] = $data[0];
-				endforeach;
+				}
 
 				krsort($commits);
 				$commits = array_values($commits);
 
-				foreach($commits as $key=>$value):
+				foreach($commits as $key=>$value) {
 					$url = $value->url;
 					$headers = array('Authorization' => 'Basic '.base64_encode("$user:$password"));
 					array_push($args2, array('type' => 'GET', 'headers' => $headers, 'url' => $url));
-				endforeach;
+				}
 
 				$responses2 = Requests::request_multiple($args2);
 
-				foreach ($responses2 as $response):
-					if (!is_a( $response, 'Requests_Response' )):
+				foreach ($responses2 as $response) {
+					if (!is_a( $response, 'Requests_Response' )) {
 						echo 'We got a ' . $response->status_code . ' error on our hands.<br><br><br>';
 						break;
-					endif;
+					}
 					// handle success
 					$data = json_decode($response->body);
 					$commit_stats[strtotime($data->commit->author->date) - (60 * 60 * 5)] = $data;
-				endforeach;
+				}
 
 				krsort($commit_stats);
 				$commit_stats = array_values($commit_stats);
@@ -118,11 +115,11 @@ class Github_API {
 				set_transient( 'repos', $repos, $expiration );
 				
 			// else we don't need to redo the api call,
-			// and we can use the transient
+			// and we can use the transients
 			} else {
-				$repos = get_transient( 'repos' );
 				$commits = get_transient( 'commits' );
 				$commit_stats = get_transient( 'commit_stats' );
+				$repos = get_transient( 'repos' );
 			}
 			
 			$args = array(
@@ -132,8 +129,7 @@ class Github_API {
 			);
 				
 			$this->view('repo-page', $args);
-
-		endif;
+		}
 	}
 	
 	/**
