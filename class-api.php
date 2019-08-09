@@ -177,6 +177,15 @@ class Github_API {
 		endif;	
 	}
 	
+	/**
+	 * Prettify the Github patch data.
+	 *
+	 * @return string
+	*/
+	public function prettyPatch() {
+		
+	}
+	
 	/** 
 	 * Set up admin options page
 	 * https://www.smashingmagazine.com/2016/03/making-a-wordpress-plugin-that-uses-service-apis/
