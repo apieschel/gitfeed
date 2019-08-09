@@ -1,8 +1,7 @@
 Plugin for displaying a feed for your latest Git commits on a portfolio site.
 
 TODO:
-1. Implement OAuth 2.0 Authentication.
-2. Use regexp to make the patch data look pretty.
+1. Use regexp to make the patch data look pretty.
 
 COMPLETED: 
 
