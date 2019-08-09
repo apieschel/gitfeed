@@ -70,11 +70,6 @@ if ( ! class_exists( 'Gitfeed' ) ) {
 		 * Load needed files for the plugin
 		 */
 		private function includes() {
-			if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'env.php' ) ) {
-				include_once 'env.php';
-				add_action('init', gf_set_up_env);
-			}
-			
 			if ( file_exists( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'class-api.php' ) ) {
 				include_once 'class-api.php';
 			}
