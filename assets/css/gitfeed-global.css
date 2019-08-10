@@ -32,3 +32,30 @@
 .gf-link {
 	color: #0000EE;
 }
+
+.pretty {
+	background: white;
+	border: none;
+	display: table-row;
+	white-space: pre;
+}
+
+.scroll {
+	margin-bottom: 40px;
+	overflow: scroll;	
+}
+
+.tab-size[data-tab-size="4"] {
+    -moz-tab-size: 4;
+    tab-size: 4;
+}
+
+table {
+	background: white;
+	border: 2px solid #eee;
+	width: 100%;
+}
+
+tbody {
+	background: white;
+}

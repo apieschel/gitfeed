@@ -143,7 +143,7 @@ class Github_API {
 				'commit_stats' => $commit_stats,
 				'repos' => $repos
 			);
-
+			
 			$this->view('repo-page', $args);
 		}
 	}
@@ -182,8 +182,10 @@ class Github_API {
 	 *
 	 * @return string
 	*/
-	public function prettyPatch() {
-		
+	public function prettyPatch($patch) {
+		$regex = preg_replace('/([<])/', '&lt;', $patch);
+		$regex = preg_replace('/([>])/', '&gt;', $regex);
+		return $regex;
 	}
 	
 	/** 

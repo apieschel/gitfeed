@@ -63,10 +63,16 @@
 						<em><?php esc_html_e('File Changed', 'gitfeed'); ?></em>:  
 						<?php echo esc_html($response2->files[$key]->filename); ?>
 					</p>
-					<p>
-						<em><?php esc_html_e('Patch', 'gitfeed'); ?></em>: 
-						<?php echo esc_html($response2->files[$key]->patch); ?>
-					</p>
+					
+					<div class="scroll">
+						<table class="tab-size" data-tab-size="4">
+							<tbody>
+								<tr>		  
+									<td><pre class="pretty"><?php echo esc_html($response2->files[$key]->patch); ?></pre></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 			<?php endforeach; ?>
 		</div>
 
