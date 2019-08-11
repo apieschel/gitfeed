@@ -68,7 +68,7 @@
 			</div>	
 
 			<?php foreach($response2->files as $key=>$value): ?>
-					<p>
+					<p class="purple">
 						<?php esc_html_e('File', 'gitfeed'); ?>:  
 						<?php echo esc_html($response2->files[$key]->filename); ?>
 					</p>

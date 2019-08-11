@@ -1,5 +1,5 @@
 .gf-repo {
-	background: #edffed;
+	background: Linen;
 	border: 1px solid black;
 	margin: 0 auto; 
 	margin-bottom: 20px; 
@@ -42,6 +42,7 @@
 }
 
 .overflow {
+	border-radius: 10px;
 	margin-bottom: 50px;
 	overflow: hidden;	
 }
@@ -68,4 +69,8 @@ table tr td {
 	display: grid;
 	grid-template-columns: 50% 50%;
 	margin-bottom: 50px;
+}
+
+.purple {
+	color: purple;
 }
