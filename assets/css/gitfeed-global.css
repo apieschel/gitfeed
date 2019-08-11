@@ -1,9 +1,10 @@
 .gf-repo {
 	background: #edffed;
-	border: 1px solid lightgrey;
+	border: 1px solid black;
 	margin: 0 auto; 
 	margin-bottom: 20px; 
-	padding: 40px; 
+	padding: 50px; 
+	padding-bottom: 0;
 	width: 75%; 
 }
 
@@ -15,13 +16,13 @@
 }
 
 .gf-subhead {
-	margin-bottom: 40px;
+	margin-bottom: 50px;
 	text-align: center;
 }
 
 .gf-repohead {
 	font-size: 1.3rem; 
-	margin-bottom: 20px;
+	margin-bottom: 50px;
 	text-align: center;
 }
 
@@ -34,14 +35,14 @@
 }
 
 .pretty {
-	background: white;
+	background: azure;
 	border: none;
 	display: table-row;
 	white-space: pre;
 }
 
 .scroll {
-	margin-bottom: 40px;
+	margin-bottom: 50px;
 	overflow: scroll;	
 }
 
@@ -51,11 +52,19 @@
 }
 
 table {
-	background: white;
-	border: 2px solid #eee;
 	width: 100%;
 }
 
-tbody {
-	background: white;
+tr {
+	background: azure;
+}
+
+table tr td {
+	padding: 10px;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: 50% 50%;
+	margin-bottom: 50px;
 }

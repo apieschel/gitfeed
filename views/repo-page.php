@@ -29,38 +29,46 @@
 			<h3 class="gf-repohead">
 				<strong><?php echo esc_html($value[0]); ?></strong>: <?php echo esc_html($value[1]); ?>
 			</h3>
-			<p>
-				<span class="gf-green">
-					<em><?php esc_html_e('Last updated', 'gitfeed'); ?></em>: <?php echo date("F j, Y, g:i a", $key); ?> 
-					<?php esc_html_e('U.S. Central Time', 'gitfeed'); ?>
-				</span>
-			</p>
+			
+			<div class="grid">
+				<div>
+					<p>
+						<span class="gf-green">
+							<?php esc_html_e('Last updated', 'gitfeed'); ?>: <?php echo date("F j, Y, g:i a", $key); ?> 
+							<?php esc_html_e('U.S. Central Time', 'gitfeed'); ?>
+						</span>
+					</p>
 
-			<?php
-				$response = $commits[$count]; 
-				$response2 = $commit_stats[$count];
-			?>
+					<?php
+						$response = $commits[$count]; 
+						$response2 = $commit_stats[$count];
+					?>
 
-			<p>
-				<em><?php esc_html_e('Latest Commit', 'gitfeed'); ?></em>:  
-				<?php echo esc_html($response->commit->message); ?>
-			</p>
-			<p>
-				<em><?php esc_html_e('Total Code Changes', 'gitfeed'); ?></em>:  
-				<?php echo esc_html($response2->stats->total); ?>
-			</p>	
-			<p>
-				<em><?php esc_html_e('Lines Added', 'gitfeed'); ?></em>:  
-				<?php echo esc_html($response2->stats->additions); ?>
-			</p>	
-			<p>
-				<em><?php esc_html_e('Lines Deleted', 'gitfeed'); ?></em>:  
-				<?php echo esc_html($response2->stats->deletions); ?>
-			</p>	
+					<p>
+						<?php esc_html_e('Latest Commit', 'gitfeed'); ?>:  
+						<?php echo esc_html($response->commit->message); ?>
+					</p>
+				</div>
+
+				<div>
+					<p>
+						<?php esc_html_e('Total Code Changes', 'gitfeed'); ?>:  
+						<?php echo esc_html($response2->stats->total); ?>
+					</p>	
+					<p>
+						<?php esc_html_e('Lines Added', 'gitfeed'); ?>:  
+						<?php echo esc_html($response2->stats->additions); ?>
+					</p>	
+					<p>
+						<?php esc_html_e('Lines Deleted', 'gitfeed'); ?>:  
+						<?php echo esc_html($response2->stats->deletions); ?>
+					</p>
+				</div>
+			</div>	
 
 			<?php foreach($response2->files as $key=>$value): ?>
 					<p>
-						<em><?php esc_html_e('File Changed', 'gitfeed'); ?></em>:  
+						<?php esc_html_e('File', 'gitfeed'); ?>:  
 						<?php echo esc_html($response2->files[$key]->filename); ?>
 					</p>
 					
