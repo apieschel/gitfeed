@@ -73,7 +73,7 @@
 						<?php echo esc_html($response2->files[$key]->filename); ?>
 					</p>
 					
-					<div class="scroll">
+					<div class="overflow">
 						<table class="tab-size" data-tab-size="4">
 							<tbody>
 								<tr>		  

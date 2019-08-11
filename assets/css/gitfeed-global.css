@@ -41,9 +41,9 @@
 	white-space: pre;
 }
 
-.scroll {
+.overflow {
 	margin-bottom: 50px;
-	overflow: scroll;	
+	overflow: hidden;	
 }
 
 .tab-size[data-tab-size="4"] {
@@ -52,6 +52,7 @@
 }
 
 table {
+	border: 1px solid #eee;
 	width: 100%;
 }
 
@@ -60,7 +61,7 @@ tr {
 }
 
 table tr td {
-	padding: 10px;
+	padding: 20px;
 }
 
 .grid {
