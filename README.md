@@ -1,4 +1,4 @@
-Plugin for displaying a feed for your latest Git commits on a portfolio site.
+Plugin for displaying a feed for your latest Git commits on a portfolio site. In the WordPress admin, place the [gitfeed] shortcode on the page where you want the feed to display.
 
 TODO:
 
