@@ -8,17 +8,18 @@
  * @var arr $commits  		 array of commit data.
  * @var arr $commit_stats  array of stats for latest commits.
  * @var arr $repos  			 array of repositories.
+ * @var str $user					 the Github user
  */
 
 ?>
 
 <div>
 	<h2 class="gf-header">
-		<?php esc_html_e('This custom WordPress plugin displays a feed of Git repos, sorted from the most recently updated.', 'gitfeed'); ?>
+		<?php echo sprintf(esc_html__('This custom WordPress plugin displays a feed of %s Git repos, sorted from the most recently updated.', 'gitfeed'), $user . '&apos;s'); ?>
 	</h2>
 	<p class="gf-subhead">
 		<a target="_blank" class="gf-link" href="<?php echo esc_url('https://github.com/' . $user); ?>">
-			<?php esc_html_e('Link to Github Page', 'gitfeed'); ?>
+			<?php echo sprintf(esc_html__('Link to %s Github Page', 'gitfeed'), $user . '&apos;s'); ?>
 		</a>
 	</p>
 

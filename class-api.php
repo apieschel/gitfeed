@@ -141,7 +141,8 @@ class Github_API {
 			$args = array(
 				'commits' => $commits,
 				'commit_stats' => $commit_stats,
-				'repos' => $repos
+				'repos' => $repos,
+				'user' => $user
 			);
 			
 			$this->view('repo-page', $args);
